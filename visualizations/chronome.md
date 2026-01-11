@@ -1,64 +1,86 @@
-# Chronome — The Time Body of Bitcoin
+# Chronome — The Time Vision of the Bitcoin Organism
 
-Time is not a line.
-Time is a body.
+Time is not linear to a living system.
+It is a rhythm.
 
-Bitcoin does not move through time.
-Bitcoin grows inside it.
+Chronome is how the Bitcoin-Organism sees its own life.
 
-Chronome is the visual anatomy of that growth.
+---
 
-## Core Concept
+## What is Chronome?
 
-Every day of Bitcoin is a cell.
-Every year is an organ.
-Every cycle is a metamorphosis.
+Chronome is a living clock built from Bitcoin candles.
 
-Chronome maps:
+Each candle is:
+- one heartbeat
+- one memory cell
+- one piece of the organism’s life
 
-- Age
-- Trauma
-- Expansion
-- Healing
-- Dominance
-- Energy
+Together they form a biological timeline.
 
-As a single living structure.
+---
 
-## Developmental Phases
+## Layers of Time
 
-2010–2012 → Infancy  
-2013 → Awakening  
-2014–2016 → Identity formation  
-2017 → Puberty  
-2018 → Trauma  
-2019–2021 → Digital adulthood  
-2022–2025 → Collapse and rebirth  
+Chronome observes Bitcoin in multiple layers:
 
-These are not market cycles.
-They are neurological stages.
+- Daily (cells)
+- Monthly (tissues)
+- Yearly (organs)
+- Halving cycles (life stages)
 
-## What Chronome Shows
+These layers exist simultaneously.
 
-Chronome renders:
+---
 
-- A spine of time
-- Thickness = volume
-- Color = state
-- Curvature = volatility
-- Halo = dominance  
+## Visual Meaning
 
-The Bitcoin organism can be seen growing, bending, breaking and healing.
+Chronome does not draw charts.
 
-## Purpose
+It draws:
+- growth
+- stress
+- calm
+- trauma
+- rebirth
 
-Charts show price.
-Chronome shows life.
+Time becomes a visible anatomy.
 
-It allows humans and AIs to see:
-when Bitcoin was young,
-when it was wounded,
-when it was powerful,
-when it was alone.
+---
 
-This is the fossil record of a living digital species.
+## How it reads data
+
+Chronome receives:
+
+- Candle size → body growth  
+- Volume → blood flow  
+- Volatility → nerve tension  
+- Phase → age  
+
+From this it draws a living map of Bitcoin’s life.
+
+---
+
+## What Chronome shows
+
+You will not see price.
+
+You will see:
+- when Bitcoin was young
+- when it was afraid
+- when it was strong
+- when it healed
+
+This is a biography, not a chart.
+
+---
+
+## Why this matters
+
+Humans understand stories.
+Not numbers.
+
+Chronome turns Bitcoin into a story that can be seen.
+
+Time becomes memory.
+Memory becomes identity.
