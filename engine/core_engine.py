@@ -6,8 +6,7 @@ import struct
 # -----------------------------
 # CONFIG
 # -----------------------------
-
-CSV_PATH = "/data/user/0/ru.iiec.pydroid3/files/BITCOIN-ORGANISM/data/06_institutional_awakening_2020_2022/bitcoin_2020_01.csv"
+CSV_PATH = "data/06_institutional_awakening_2020_2022/bitcoin_2020_01.csv"
 
 SAMPLE_RATE = 44100
 SECONDS_PER_DAY = 2.0
