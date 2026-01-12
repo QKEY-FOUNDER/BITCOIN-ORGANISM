@@ -6,6 +6,7 @@ import struct
 # -----------------------------
 # CONFIG
 # -----------------------------
+
 CSV_PATH = "data/06_institutional_awakening_2020_2022/bitcoin_2020_01.csv"
 
 SAMPLE_RATE = 44100
