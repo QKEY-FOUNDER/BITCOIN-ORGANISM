@@ -42,3 +42,54 @@ def compute_geo_dominance(csv_path):
         return scores
 
     return {r: scores[r] / total for r in scores}
+
+from datetime import datetime
+
+BINANCE_KLINES = "https://api.binance.com/api/v3/klines"
+
+REGION_HOURS = {
+    "east_asia": range(0, 9),
+    "europe": range(7, 16),
+    "north_america": range(13, 22),
+    "crypto_native": range(0, 24)
+}
+
+def fetch_intraday_volume():
+    params = {
+        "symbol": "BTCUSDT",
+        "interval": "1h",
+        "limit": 24
+    }
+    data = requests.get(BINANCE_KLINES, params=params).json()
+    return data
+
+def compute_intraday_geo_vector():
+    candles = fetch_intraday_volume()
+
+    hour_regions = {}
+
+    for c in candles:
+        ts = int(c[0]) / 1000
+        hour = datetime.utcfromtimestamp(ts).hour
+        volume = float(c[5])
+
+        region_weights = {}
+
+        for region, hours in REGION_HOURS.items():
+            if hour in hours:
+                region_weights[region] = 1.0
+            else:
+                region_weights[region] = 0.2  # background activity
+
+        # normalize
+        total = sum(region_weights.values())
+        for r in region_weights:
+            region_weights[r] /= total
+
+        # multiply by real traded volume
+        for r in region_weights:
+            region_weights[r] *= volume
+
+        hour_regions[hour] = region_weights
+
+    return hour_regions
