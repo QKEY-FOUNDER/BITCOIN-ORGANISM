@@ -1,5 +1,6 @@
 from immune_system.organism_validator import evaluate_health
-from geo_engine.geo_index import compute_geo_dominance, compute_geo_vector, compute_intraday_geo_vector
+from geo_engine.geo_index import get_geo_vector
+geo_vector = get_geo_vector(CSV_PATH)
 from geo_engine.geo_traits import combine_geo_traits
 
 import csv
