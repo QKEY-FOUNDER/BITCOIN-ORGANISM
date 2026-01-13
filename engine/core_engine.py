@@ -114,8 +114,18 @@ for i in range(len(rows)):
             local_weight = 1.0
 
         # rhythmic pulse driven by geopolitics
-        pulse = math.sin(2 * math.pi * geo_bpm / 60 * t * local_weight)
-        rhythm_gate = 1 if pulse > 0 else 0.25
+     heartbeat = math.sin(2 * math.pi * heart_rate / 60 * t)
+
+if arrhythmia:
+    # chaotic heartbeat (crash)
+    pulse = math.sin(2 * math.pi * heart_rate / 45 * t + math.sin(t * 20))
+    rhythm_gate = 1 if pulse > 0 else 0.1
+elif tachy:
+    # racing heart (bull run)
+    rhythm_gate = 1 if heartbeat > 0 else 0.15
+else:
+    # normal heart
+    rhythm_gate = 1 if heartbeat > 0 else 0.3
 
         v = 0.0
         for interval in DNA_INTERVALS:
