@@ -77,7 +77,12 @@ for i in range(len(rows)):
     direction = (closes[i] - opens[i]) / opens[i]
     stress = normalize(stress_raw[i], smin, smax)
     confidence = doms[i] / 100.0
-
+    
+# cardiac trigger from price acceleration
+    if i > 0:
+        price_velocity = abs(closes[i] - closes[i-1]) / closes[i-1]
+    else:
+        price_velocity = 0.0
     amp = (0.3 + 0.7 * energy) * geo_brightness
     gravity = (0.5 + confidence * 0.5) * geo_stability
     pitch = max(-6, min(6, direction * 12 + geo_aggression * 6))
@@ -86,6 +91,18 @@ for i in range(len(rows)):
 
     for n in range(samples):
         t = n / SAMPLE_RATE
+
+        # heart rate from stress
+    heart_rate = geo_bpm * (1 + stress * 2)
+
+    # detect cardiac events
+    tachy = price_velocity > 0.05
+    arrhythmia = price_velocity > 0.12
+
+    if tachy:
+        heart_rate *= 1.5
+    if arrhythmia:
+        heart_rate *= 2.5
 
         # intraday hour
         hour = int((n / samples) * 24)
