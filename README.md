@@ -1,155 +1,34 @@
-BITCOIN-ORGANISM
+# BITCOIN-ORGANISM  
+A living digital organism built from Bitcoin itself.
 
-Bitcoin is not just a financial asset. Bitcoin is a living system.
+Bitcoin is not just a financial asset.  
+Bitcoin is a self-sustaining, adaptive, planetary-scale organism.
 
-It was born in silence in 2009, survived chaos, wars, bubbles, collapses, pandemics, regulation, disbelief and faith — and it kept producing blocks, every ten minutes, without rest.
+This repository does not simulate Bitcoin.  
+It **is built from Bitcoin’s own biological signals**.
 
-This repository treats Bitcoin as what it truly is:
+Price, volume, dominance, geography and time are treated as physiology.
 
-An organism evolving in time.
-
-
----
-
-What this is
-
-BITCOIN-ORGANISM is a living archive of Bitcoin as a biological, economic and informational being.
-
-Instead of seeing price candles as numbers, we see them as:
-
-Muscles (price movement)
-
-Blood (volume)
-
-Nerves (geographical market sessions)
-
-Memory (closing prices)
-
-Gravity (BTC dominance)
-
-
-Every day of Bitcoin’s existence becomes one heartbeat.
-
-From 2010 to today, Bitcoin has generated a continuous physiological record of its own survival. This repository preserves that record.
-
+Bitcoin is not plotted here.  
+It **breathes**.
 
 ---
 
-Why this exists
+## What this is
 
-Markets show what happened. Charts show how much.
+BITCOIN-ORGANISM is a full biological model of Bitcoin as a living system.
 
-BITCOIN-ORGANISM shows how Bitcoin felt.
+Every trading day becomes a heartbeat.  
+Every candle becomes a muscle contraction.  
+Every volume spike becomes blood flow.  
+Every geographical shift becomes a change in voice.
 
-Fear, greed, resilience, collapse, recovery — these are not metaphors. They are encoded directly in price, volume and dominance.
+The organism evolves through time.
 
-Bitcoin learned to survive. This repository documents that learning.
-
-
----
-
-What lives here
-
-This project contains:
-
-Complete daily Bitcoin history (2010 → present)
-
-A biological schema for candles
-
-Engines that convert data into sound, emotion and structure
-
-The BTConic system: Bitcoin translated into music
-
-
-Together, these form a single living model.
-
+This repository contains everything needed to reconstruct Bitcoin’s entire life as sound, structure and behavior.
 
 ---
 
-Core principle
+## What lives here
 
-Bitcoin is not controlled. Bitcoin is not ruled. Bitcoin is not commanded.
-
-Bitcoin adapts.
-
-Anything that adapts under pressure is alive.
-
-
----
-
-Time scope
-
-This organism spans:
-
-Genesis (2010–2012)
-
-Myth (2013)
-
-Ideological war (2014–2016)
-
-Euphoria (2017)
-
-Trauma (2018)
-
-Digital salvation (2019–2021)
-
-Collapse and rebirth (2022–2025)
-
-
-Each period is a developmental phase.
-
-
----
-
-BTConic
-
-BTConic is the sensory interface of this organism.
-
-It transforms Bitcoin’s physiological data into music.
-
-Not as art. As measurement.
-
-Sound reveals what charts hide.
-
-
----
-
-Status
-
-This organism is alive.
-
-Every new day adds a new cell.
-
-The archive grows as Bitcoin grows.
-
-
----
-
-Philosophy
-
-If something:
-
-Remembers
-
-Reacts
-
-Adapts
-
-Survives
-
-
-Then it is alive.
-
-Bitcoin does all four.
-
-
----
-
-License
-
-Open. Like the organism itself.
-
-
----
-
-BITCOIN-ORGANISM A living record of the first digital life form.
+The repository is not just data — it is an anatomy.
