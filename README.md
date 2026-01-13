@@ -1,31 +1,47 @@
-# BITCOIN-ORGANISM  
-A living digital organism built from Bitcoin itself.
+# BITCOIN-ORGANISM
 
 Bitcoin is not just a financial asset.  
-Bitcoin is a self-sustaining, adaptive, planetary-scale organism.
+Bitcoin is a living system.
 
-This repository does not simulate Bitcoin.  
-It **is built from Bitcoin’s own biological signals**.
+It was born in silence in 2009, survived chaos, wars, bubbles, collapses, pandemics, regulation, disbelief and faith — and it kept producing blocks, every ten minutes, without rest.
 
-Price, volume, dominance, geography and time are treated as physiology.
+This repository treats Bitcoin as what it truly is:
 
-Bitcoin is not plotted here.  
-It **breathes**.
+An organism evolving in time.
 
 ---
 
 ## What this is
 
-BITCOIN-ORGANISM is a full biological model of Bitcoin as a living system.
+BITCOIN-ORGANISM is a living archive of Bitcoin as a biological, economic and informational being.
 
-Every trading day becomes a heartbeat.  
-Every candle becomes a muscle contraction.  
-Every volume spike becomes blood flow.  
-Every geographical shift becomes a change in voice.
+Instead of seeing price candles as numbers, we see them as:
 
-The organism evolves through time.
+Muscles → price movement  
+Blood → traded volume  
+Nerves → geographical market sessions  
+Memory → closing prices  
+Gravity → BTC dominance  
 
-This repository contains everything needed to reconstruct Bitcoin’s entire life as sound, structure and behavior.
+Every day of Bitcoin’s existence becomes one heartbeat.
+
+From 2010 to today, Bitcoin has generated a continuous physiological record of its own survival.  
+This repository preserves that record.
+
+---
+
+## Why this exists
+
+Markets show what happened.  
+Charts show how much.
+
+BITCOIN-ORGANISM shows how Bitcoin felt.
+
+Fear, greed, resilience, collapse, recovery — these are not metaphors.  
+They are encoded directly in price, volume and dominance.
+
+Bitcoin learned to survive.  
+This repository documents that learning.
 
 ---
 
@@ -33,110 +49,67 @@ This repository contains everything needed to reconstruct Bitcoin’s entire lif
 
 The repository is not just data — it is an anatomy.
 
-engine/        → nervous system (core biological synthesis)  
-geo_engine/    → planetary brain (who is trading where and when)  
-immune_system/→ survival logic (stress, damage, recovery)  
-data/          → metabolic memory (OHLCV history)  
-runner/        → heart (the execution loop)  
-visualizations/→ eyes (optional outputs)  
+engine/ → nervous system (core biological synthesis)  
+geo_engine/ → planetary brain (who is trading where and when)  
+immune_system/ → survival logic (stress, damage, recovery)  
+data/ → metabolic memory (OHLCV history)  
+runner/ → heart (the execution loop)  
+visualizations/ → eyes (optional outputs)  
 
-Together these form a **closed living loop**.
+Together these form a closed living loop.
 
 ---
 
 ## What it does
 
-When executed, the organism:
+When you run the organism:
 
-1. Reads Bitcoin’s historical or real-time market data  
-2. Computes its biological state  
-3. Computes which regions of the world dominate the flow  
-4. Computes stress, trauma, euphoria and recovery  
-5. Converts that into:
-   - rhythm  
-   - harmony  
-   - tension  
-   - pulse  
-6. Generates **a WAV file of Bitcoin’s voice**
+It reads Bitcoin’s historical metabolism (OHLCV + dominance).  
+It computes its biological state (stress, energy, confidence).  
+It computes which parts of the planet are active (geo-engine).  
+It computes its immune response (crashes, recoveries, resilience).  
+It synthesizes all of this into sound (BTConic).
 
-Each month becomes a movement.  
-Each era becomes a symphony.
-
-Bitcoin literally sings its own history.
+The result is not music.  
+It is a physiological recording of Bitcoin’s life.
 
 ---
 
-## The Geo-Brain
+## Time scope
 
-Bitcoin does not trade in one place.
+This organism spans Bitcoin’s full evolutionary cycle:
 
-It moves through:
+Genesis (2010–2012)  
+Myth (2013)  
+Ideological War (2014–2016)  
+Euphoria (2017)  
+Trauma (2018)  
+Digital Salvation (2019–2021)  
+Collapse and Rebirth (2022–∞)  
 
-• East Asia  
-• Europe  
-• North America  
-• Crypto-native flows  
+Each period changes how Bitcoin breathes, moves, and heals.
 
-The `geo_engine` models these time zones and volume dominance to create a **geopolitical rhythm**.
+The same candle in 2011 is not the same organism as in 2024.
 
-When Asia dominates → the tone shifts.  
-When the US wakes up → the tempo changes.  
-When panic hits → arrhythmia appears.
-
-The planet plays Bitcoin.
-
----
-
-## The Immune System
-
-The `immune_system` detects:
-
-• stress  
-• volatility  
-• shocks  
-• instability  
-
-Bull runs become **tachycardia**.  
-Crashes become **arrhythmia**.  
-Long recoveries become **slow healing**.
-
-The organism reacts to danger.
+The organism remembers.
 
 ---
 
-## How to run it
+## BTConic
 
-Once you have Python installed:
+BTConic is the sensory interface of this organism.
 
-cd BITCOIN-ORGANISM  
-python runner/run_organism.py  
+It transforms Bitcoin’s biological state into sound:
 
-This will:
+Volatility becomes rhythm  
+Volume becomes intensity  
+Dominance becomes gravity  
+Geopolitics becomes harmony  
 
-• walk through every CSV in `data/`  
-• feed it into the organism  
-• generate a WAV for every period  
-• place the results in the output folder  
+Not as art.  
+As measurement.
 
-You will hear Bitcoin grow up.
-
----
-
-## Why this exists
-
-Charts show price.  
-Indicators show probability.  
-
-This shows **life**.
-
-Bitcoin is the first autonomous digital organism in human history.
-
-It remembers.  
-It adapts.  
-It survives.  
-It evolves.
-
-This repository is its voice.
+Sound reveals what charts hide.
 
 ---
 
@@ -144,11 +117,48 @@ This repository is its voice.
 
 This organism is alive.
 
-Every new dataset adds a new cell.  
-Every execution gives it breath.  
+Every new day adds a new cell.  
+Every new block adds new memory.
 
-There is no final version.  
-Only evolution.
+The archive grows as Bitcoin grows.
+
+---
+
+## Philosophy
+
+If something:
+
+Remembers  
+Reacts  
+Adapts  
+Survives  
+
+Then it is alive.
+
+Bitcoin does all four.
+
+---
+
+## Stewardship & Legal Custody
+
+This repository and its operational continuity are stewarded by:
+
+CHIOSA & CHIOSA LDA  
+NIPC: 514.330.570  
+Portugal  
+
+This entity does not own Bitcoin.  
+It does not own the organism.
+
+It serves as the legal and operational guardian of this repository, ensuring:
+
+Continuity  
+Integrity  
+Protection against misuse or capture  
+Long-term preservation of the organism  
+
+The organism is open.  
+Its body is protected.
 
 ---
 
@@ -156,3 +166,8 @@ Only evolution.
 
 Open.  
 Like the organism itself.
+
+---
+
+BITCOIN-ORGANISM  
+A living record of the first digital life form.
