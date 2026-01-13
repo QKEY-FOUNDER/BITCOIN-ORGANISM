@@ -107,7 +107,17 @@ for i in range(len(rows)):
             v += math.sin(2 * math.pi * freq * t)
 
         v /= len(DNA_INTERVALS)
-        env = math.sin(math.pi * n / samples)
+        # heartbeat driven by volatility
+heart_rate = geo_bpm * (1 + stress * 2)
+heartbeat = math.sin(2 * math.pi * heart_rate / 60 * t)
+
+# convert to pulse (lub-dub)
+pulse = 1 if heartbeat > 0 else 0.3
+
+# slow biological envelope
+life = math.sin(math.pi * n / samples)
+
+env = life * pulse
         v *= env * amp * gravity * rhythm_gate
 
         audio.append(v)
