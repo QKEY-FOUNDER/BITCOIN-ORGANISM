@@ -1,0 +1,22 @@
+exchange,region,notes
+mtgox,east_asia,Original Japanese exchange dominating 2010–2014
+btcchina,east_asia,Mainland China exchange dominating 2013–2017
+okcoin,east_asia,Chinese exchange active during 2013–2017
+huobi,east_asia,Chinese exchange dominating 2016–2020
+binance,east_asia,Originally Chinese, then pan-Asian liquidity center
+bybit,east_asia,Asia-centered derivatives exchange
+bitflyer,east_asia,Japanese exchange
+coinbase,north_america,US institutional gateway
+gemini,north_america,US regulated exchange
+kraken,north_america,US-based global liquidity hub
+bitstamp,europe,European fiat gateway
+bitfinex,europe,Europe-based crypto liquidity hub
+luno,europe,European-African bridge
+bitmex,crypto_native,Offshore derivatives, crypto-only liquidity
+deribit,crypto_native,Options and derivatives, crypto-native
+ftx,crypto_native,Global crypto-native hub before collapse
+okx,east_asia,Rebranded OKCoin, Asia liquidity
+kucoin,east_asia,Asia-focused crypto exchange
+gateio,east_asia,Asia crypto liquidity
+poloniex,crypto_native,Early crypto-only exchange
+bittrex,north_america,US-based crypto exchange
