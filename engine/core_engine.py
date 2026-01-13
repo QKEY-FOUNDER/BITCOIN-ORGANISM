@@ -3,6 +3,9 @@ import math
 import wave
 import struct
 
+from geo_engine.geo_index import compute_geo_vector
+from geo_engine.geo_traits import combine_geo_traits
+
 # -----------------------------
 # CONFIG
 # -----------------------------
@@ -50,6 +53,22 @@ stress_raw = [h - l for h, l in zip(highs, lows)]
 smin, smax = min(stress_raw), max(stress_raw)
 
 # -----------------------------
+# GEO STATE
+# -----------------------------
+
+geo_vector = compute_geo_vector(CSV_PATH)
+geo_state = combine_geo_traits(geo_vector)
+
+geo_bpm        = geo_state["bpm"]
+geo_rhythm     = geo_state["rhythm_density"]
+geo_aggression = geo_state["harmonic_aggression"]
+geo_brightness = geo_state["brightness"]
+geo_stability  = geo_state["stability"]
+
+# tempo control
+SECONDS_PER_DAY = 60.0 / geo_bpm * 8   # 8 beats per candle
+
+# -----------------------------
 # SYNTHESIS
 # -----------------------------
 
@@ -62,9 +81,9 @@ for i in range(len(rows)):
     stress = normalize(stress_raw[i], smin, smax)
     confidence = doms[i] / 100.0
 
-    amp = 0.3 + 0.7 * energy
-    gravity = 0.5 + confidence * 0.5
-    pitch = max(-6, min(6, direction * 12))
+    amp = (0.3 + 0.7 * energy) * geo_brightness
+    gravity = (0.5 + confidence * 0.5) * geo_stability
+    pitch = max(-6, min(6, direction * 12 + geo_aggression * 6))
 
     samples = int(SAMPLE_RATE * SECONDS_PER_DAY)
 
@@ -72,15 +91,18 @@ for i in range(len(rows)):
         t = n / SAMPLE_RATE
         v = 0.0
 
+        # rhythmic gating from geo_rhythm
+        rhythm_gate = 1 if (math.sin(2 * math.pi * geo_rhythm * t) > 0) else 0.3
+
         for interval in DNA_INTERVALS:
             freq = semitone_to_freq(BASE_FREQ, interval + pitch)
-            freq += stress * 5 * math.sin(2 * math.pi * 0.5 * t)
+            freq += stress * (5 + geo_aggression * 5) * math.sin(2 * math.pi * 0.5 * t)
             v += math.sin(2 * math.pi * freq * t)
 
         v /= len(DNA_INTERVALS)
 
         envelope = math.sin(math.pi * n / samples)
-        v *= envelope * amp * gravity
+        v *= envelope * amp * gravity * rhythm_gate
 
         audio.append(v)
 
@@ -101,4 +123,4 @@ for s in audio:
 
 wav.close()
 
-print("Bitcoin Organism voice created: bitcoin_organism_jan_2020.wav")
+print("Bitcoin Organism with GeoDNA created: bitcoin_organism_jan_2020.wav")
