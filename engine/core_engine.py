@@ -1,7 +1,11 @@
+CSV_PATH = "..."
+
 from immune_system.organism_validator import evaluate_health
 from geo_engine.geo_index import get_geo_vector
-geo_vector = get_geo_vector(CSV_PATH)
 from geo_engine.geo_traits import combine_geo_traits
+
+geo_vector = get_geo_vector(CSV_PATH)
+geo_traits = combine_geo_traits(geo_vector)
 
 import csv
 import math
