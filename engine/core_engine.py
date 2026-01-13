@@ -1,3 +1,6 @@
+from immune_system.organism_validator import evaluate_health
+from geo_engine.geo_index import compute_geo_dominance
+
 import csv
 import math
 import wave
@@ -73,6 +76,9 @@ audio = []
 
 for i in range(len(rows)):
 
+    geo = compute_geo_dominance(CSV_PATH)
+health = evaluate_health(stress, vols[i], geo)
+
     energy = normalize(vols[i], vol_min, vol_max)
     direction = (closes[i] - opens[i]) / opens[i]
     stress = normalize(stress_raw[i], smin, smax)
@@ -84,7 +90,14 @@ for i in range(len(rows)):
     else:
         price_velocity = 0.0
     amp = (0.3 + 0.7 * energy) * geo_brightness
-    gravity = (0.5 + confidence * 0.5) * geo_stability
+    if health == "HEALTHY":
+    gravity = 0.8 + confidence * 0.4
+elif health == "STRESSED":
+    gravity = 0.6 + confidence * 0.3
+elif health == "INFECTED":
+    gravity = 0.3 + confidence * 0.2
+else:
+    gravity = 0.5
     pitch = max(-6, min(6, direction * 12 + geo_aggression * 6))
 
     samples = int(SAMPLE_RATE * SECONDS_PER_DAY)
@@ -129,7 +142,8 @@ else:
 
         v = 0.0
         for interval in DNA_INTERVALS:
-            freq = semitone_to_freq(BASE_FREQ, interval + pitch)
+            geo_bias = geo.get("north_america", 0.25) - geo.get("east_asia", 0.25)
+freq = semitone_to_freq(BASE_FREQ, interval + pitch + geo_bias * 4)
             freq += stress * (5 + geo_aggression * 5) * math.sin(2 * math.pi * 0.5 * t)
             v += math.sin(2 * math.pi * freq * t)
 
