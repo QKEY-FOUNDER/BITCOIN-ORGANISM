@@ -1,13 +1,11 @@
 from immune_system.organism_validator import evaluate_health
-from geo_engine.geo_index import compute_geo_dominance
+from geo_engine.geo_index import compute_geo_dominance, compute_geo_vector, compute_intraday_geo_vector
+from geo_engine.geo_traits import combine_geo_traits
 
 import csv
 import math
 import wave
 import struct
-
-from geo_engine.geo_index import compute_geo_vector, compute_intraday_geo_vector
-from geo_engine.geo_traits import combine_geo_traits
 
 # -----------------------------
 # CONFIG
@@ -41,12 +39,12 @@ with open(CSV_PATH, newline="") as f:
     for r in reader:
         rows.append(r)
 
-opens = [float(r["Open"]) for r in rows]
-highs = [float(r["High"]) for r in rows]
-lows  = [float(r["Low"]) for r in rows]
-closes= [float(r["Close"]) for r in rows]
-vols  = [float(r["Volume"]) for r in rows]
-doms  = [float(r["DominanceBTC"]) for r in rows]
+opens  = [float(r["Open"]) for r in rows]
+highs  = [float(r["High"]) for r in rows]
+lows   = [float(r["Low"]) for r in rows]
+closes = [float(r["Close"]) for r in rows]
+vols   = [float(r["Volume"]) for r in rows]
+doms   = [float(r["DominanceBTC"]) for r in rows]
 
 vol_min, vol_max = min(vols), max(vols)
 stress_raw = [h - l for h, l in zip(highs, lows)]
@@ -58,7 +56,6 @@ smin, smax = min(stress_raw), max(stress_raw)
 
 geo_vector = compute_geo_vector(CSV_PATH)
 geo_traits = combine_geo_traits(geo_vector)
-
 intraday_geo = compute_intraday_geo_vector()
 
 geo_bpm        = geo_traits["bpm"]
@@ -76,28 +73,34 @@ audio = []
 
 for i in range(len(rows)):
 
-    geo = compute_geo_dominance(CSV_PATH)
-health = evaluate_health(stress, vols[i], geo)
-
     energy = normalize(vols[i], vol_min, vol_max)
     direction = (closes[i] - opens[i]) / opens[i]
     stress = normalize(stress_raw[i], smin, smax)
     confidence = doms[i] / 100.0
-    
-# cardiac trigger from price acceleration
+
+    geo = compute_geo_dominance(CSV_PATH)
+    health = evaluate_health(stress, vols[i], geo)
+
+    # cardiac trigger from price acceleration
     if i > 0:
         price_velocity = abs(closes[i] - closes[i-1]) / closes[i-1]
     else:
         price_velocity = 0.0
+
+    tachy = price_velocity > 0.05
+    arrhythmia = price_velocity > 0.12
+
     amp = (0.3 + 0.7 * energy) * geo_brightness
+
     if health == "HEALTHY":
-    gravity = 0.8 + confidence * 0.4
-elif health == "STRESSED":
-    gravity = 0.6 + confidence * 0.3
-elif health == "INFECTED":
-    gravity = 0.3 + confidence * 0.2
-else:
-    gravity = 0.5
+        gravity = 0.8 + confidence * 0.4
+    elif health == "STRESSED":
+        gravity = 0.6 + confidence * 0.3
+    elif health == "INFECTED":
+        gravity = 0.3 + confidence * 0.2
+    else:
+        gravity = 0.5
+
     pitch = max(-6, min(6, direction * 12 + geo_aggression * 6))
 
     samples = int(SAMPLE_RATE * SECONDS_PER_DAY)
@@ -106,61 +109,41 @@ else:
         t = n / SAMPLE_RATE
 
         # heart rate from stress
-    heart_rate = geo_bpm * (1 + stress * 2)
+        heart_rate = geo_bpm * (1 + stress * 2)
+        if tachy:
+            heart_rate *= 1.5
+        if arrhythmia:
+            heart_rate *= 2.5
 
-    # detect cardiac events
-    tachy = price_velocity > 0.05
-    arrhythmia = price_velocity > 0.12
+        heartbeat = math.sin(2 * math.pi * heart_rate / 60 * t)
 
-    if tachy:
-        heart_rate *= 1.5
-    if arrhythmia:
-        heart_rate *= 2.5
+        if arrhythmia:
+            pulse = math.sin(2 * math.pi * heart_rate / 45 * t + math.sin(t * 20))
+            rhythm_gate = 1 if pulse > 0 else 0.1
+        elif tachy:
+            rhythm_gate = 1 if heartbeat > 0 else 0.15
+        else:
+            rhythm_gate = 1 if heartbeat > 0 else 0.3
 
-        # intraday hour
+        # intraday region
         hour = int((n / samples) * 24)
         hour_geo = intraday_geo.get(hour, {})
-        if hour_geo:
-            dominant = max(hour_geo, key=hour_geo.get)
-            local_weight = hour_geo[dominant]
-        else:
-            local_weight = 1.0
+        local_weight = max(hour_geo.values()) if hour_geo else 1.0
 
         # rhythmic pulse driven by geopolitics
-     heartbeat = math.sin(2 * math.pi * heart_rate / 60 * t)
-
-if arrhythmia:
-    # chaotic heartbeat (crash)
-    pulse = math.sin(2 * math.pi * heart_rate / 45 * t + math.sin(t * 20))
-    rhythm_gate = 1 if pulse > 0 else 0.1
-elif tachy:
-    # racing heart (bull run)
-    rhythm_gate = 1 if heartbeat > 0 else 0.15
-else:
-    # normal heart
-    rhythm_gate = 1 if heartbeat > 0 else 0.3
-
         v = 0.0
         for interval in DNA_INTERVALS:
             geo_bias = geo.get("north_america", 0.25) - geo.get("east_asia", 0.25)
-freq = semitone_to_freq(BASE_FREQ, interval + pitch + geo_bias * 4)
+            freq = semitone_to_freq(BASE_FREQ, interval + pitch + geo_bias * 4)
             freq += stress * (5 + geo_aggression * 5) * math.sin(2 * math.pi * 0.5 * t)
             v += math.sin(2 * math.pi * freq * t)
 
         v /= len(DNA_INTERVALS)
-        # heartbeat driven by volatility
-heart_rate = geo_bpm * (1 + stress * 2)
-heartbeat = math.sin(2 * math.pi * heart_rate / 60 * t)
 
-# convert to pulse (lub-dub)
-pulse = 1 if heartbeat > 0 else 0.3
+        life = math.sin(math.pi * n / samples)
+        env = life * rhythm_gate * local_weight
 
-# slow biological envelope
-life = math.sin(math.pi * n / samples)
-
-env = life * pulse
-        v *= env * amp * gravity * rhythm_gate
-
+        v *= env * amp * gravity
         audio.append(v)
 
 # -----------------------------
