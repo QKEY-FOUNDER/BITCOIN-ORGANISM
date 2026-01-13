@@ -3,7 +3,7 @@ import math
 import wave
 import struct
 
-from geo_engine.geo_index import compute_geo_vector
+from geo_engine.geo_index import compute_geo_vector, compute_intraday_geo_vector
 from geo_engine.geo_traits import combine_geo_traits
 
 # -----------------------------
@@ -13,10 +13,7 @@ from geo_engine.geo_traits import combine_geo_traits
 CSV_PATH = "data/06_institutional_awakening_2020_2022/bitcoin_2020_01.csv"
 
 SAMPLE_RATE = 44100
-SECONDS_PER_DAY = 2.0
-BASE_FREQ = 293.66  # D4 (Ré menor)
-
-# Bitcoin DNA: D – A – F – D – C – D
+BASE_FREQ = 293.66   # D4
 DNA_INTERVALS = [0, 7, 3, 0, -2, 0]
 
 # -----------------------------
@@ -53,19 +50,19 @@ stress_raw = [h - l for h, l in zip(highs, lows)]
 smin, smax = min(stress_raw), max(stress_raw)
 
 # -----------------------------
-# GEO STATE
+# GEO SYSTEM
 # -----------------------------
 
 geo_vector = compute_geo_vector(CSV_PATH)
-geo_state = combine_geo_traits(geo_vector)
+geo_traits = combine_geo_traits(geo_vector)
 
-geo_bpm        = geo_state["bpm"]
-geo_rhythm     = geo_state["rhythm_density"]
-geo_aggression = geo_state["harmonic_aggression"]
-geo_brightness = geo_state["brightness"]
-geo_stability  = geo_state["stability"]
+intraday_geo = compute_intraday_geo_vector()
 
-# tempo control
+geo_bpm        = geo_traits["bpm"]
+geo_brightness = geo_traits["brightness"]
+geo_aggression = geo_traits["harmonic_aggression"]
+geo_stability  = geo_traits["stability"]
+
 SECONDS_PER_DAY = 60.0 / geo_bpm * 8   # 8 beats per candle
 
 # -----------------------------
@@ -89,20 +86,29 @@ for i in range(len(rows)):
 
     for n in range(samples):
         t = n / SAMPLE_RATE
+
+        # intraday hour
+        hour = int((n / samples) * 24)
+        hour_geo = intraday_geo.get(hour, {})
+        if hour_geo:
+            dominant = max(hour_geo, key=hour_geo.get)
+            local_weight = hour_geo[dominant]
+        else:
+            local_weight = 1.0
+
+        # rhythmic pulse driven by geopolitics
+        pulse = math.sin(2 * math.pi * geo_bpm / 60 * t * local_weight)
+        rhythm_gate = 1 if pulse > 0 else 0.25
+
         v = 0.0
-
-        # rhythmic gating from geo_rhythm
-        rhythm_gate = 1 if (math.sin(2 * math.pi * geo_rhythm * t) > 0) else 0.3
-
         for interval in DNA_INTERVALS:
             freq = semitone_to_freq(BASE_FREQ, interval + pitch)
             freq += stress * (5 + geo_aggression * 5) * math.sin(2 * math.pi * 0.5 * t)
             v += math.sin(2 * math.pi * freq * t)
 
         v /= len(DNA_INTERVALS)
-
-        envelope = math.sin(math.pi * n / samples)
-        v *= envelope * amp * gravity * rhythm_gate
+        env = math.sin(math.pi * n / samples)
+        v *= env * amp * gravity * rhythm_gate
 
         audio.append(v)
 
@@ -123,4 +129,4 @@ for s in audio:
 
 wav.close()
 
-print("Bitcoin Organism with GeoDNA created: bitcoin_organism_jan_2020.wav")
+print("Bitcoin-Organism with Geopolitical Circadian Rhythm created.")
