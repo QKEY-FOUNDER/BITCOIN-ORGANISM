@@ -35,7 +35,7 @@ def load_historical_geo(month):
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for r in reader:
-            geo[r["Region"]] = float(r["Dominance"])
+            geo[r["region"]] = float(r["dominance"])
 
     return geo
 
