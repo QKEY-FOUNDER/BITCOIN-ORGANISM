@@ -83,7 +83,7 @@ for i in range(len(rows)):
     stress = normalize(stress_raw[i], smin, smax)
     confidence = doms[i] / 100.0
 
-    geo = compute_geo_dominance(CSV_PATH)
+    geo = get_geo_vector(CSV_PATH)
     health = evaluate_health(stress, vols[i], geo)
 
     # cardiac trigger from price acceleration
