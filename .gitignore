@@ -1,0 +1,40 @@
+# ============================================================
+# BITCOIN-ORGANISM — Git Ignore
+# What is ignored is metabolism, not DNA
+# ============================================================
+
+# ------------------------------------------------------------
+# Generated daily / monthly Bitcoin data (metabolism)
+# ------------------------------------------------------------
+data/07_global_reckoning_2022_infinity/*.csv
+data/07_global_reckoning_2022_infinity/raw/
+data/07_global_reckoning_2022_infinity/final/
+data/07_global_reckoning_2022_infinity/logs/
+data/07_global_reckoning_2022_infinity/snapshots/
+data/07_global_reckoning_2022_infinity/data_geo/
+
+# ------------------------------------------------------------
+# Geo-engine outputs (derived, reproducible)
+# ------------------------------------------------------------
+data_geo/normalized/
+data_geo/reports/
+
+# ------------------------------------------------------------
+# External mirrors / historical imports
+# ------------------------------------------------------------
+data/BITCOIN-ORGANISM-MIRROR/
+
+# ------------------------------------------------------------
+# Temporary / runtime artifacts
+# ------------------------------------------------------------
+*.log
+*.tmp
+__pycache__/
+*.pyc
+
+# ------------------------------------------------------------
+# OS / editor noise
+# ------------------------------------------------------------
+.DS_Store
+.vscode/
+.idea/
