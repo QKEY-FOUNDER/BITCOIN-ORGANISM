@@ -1,73 +1,54 @@
-import csv
 import requests
-import time
-from datetime import datetime, timedelta
+import csv
+import os
+from datetime import datetime, timezone
 
-# ==============================
-# CONFIGURAÇÃO
-# ==============================
-START_DATE = "2024-10-01"
-END_DATE   = "2025-12-31"
-OUTPUT_FILE = "btc_dominance_daily_gecko.csv"
+# -------------------------
+# CONFIG
+# -------------------------
+COINGECKO_URL = "https://api.coingecko.com/api/v3/global"
+RAW_DIR = "data/raw/dominance"
 
-COINGECKO_GLOBAL_URL = "https://api.coingecko.com/api/v3/global"
+# -------------------------
+# TIME (UTC DAY)
+# -------------------------
+now_utc = datetime.now(timezone.utc)
+date_str = now_utc.strftime("%Y-%m-%d")
+year_month = now_utc.strftime("%Y_%m")
 
-# ==============================
-# UTILITÁRIOS
-# ==============================
-def daterange(start, end):
-    cur = datetime.strptime(start, "%Y-%m-%d")
-    end = datetime.strptime(end, "%Y-%m-%d")
-    while cur <= end:
-        yield cur.strftime("%Y-%m-%d")
-        cur += timedelta(days=1)
+# -------------------------
+# FILE PATH
+# -------------------------
+os.makedirs(RAW_DIR, exist_ok=True)
+file_path = f"{RAW_DIR}/btc_dominance_{year_month}_raw.csv"
 
-# ==============================
-# FETCH DOMINÂNCIA BTC
-# ==============================
-def fetch_btc_dominance():
-    while True:
-        r = requests.get(COINGECKO_GLOBAL_URL, timeout=20)
+# -------------------------
+# FETCH DATA
+# -------------------------
+response = requests.get(COINGECKO_URL, timeout=20)
+response.raise_for_status()
 
-        if r.status_code == 200:
-            data = r.json()["data"]
-            return round(data["market_cap_percentage"]["btc"], 2)
+data = response.json()
+dominance = data["data"]["market_cap_percentage"]["btc"]
 
-        if r.status_code == 429:
-            print("⚠️  Rate limit atingido — a aguardar 60 segundos...")
-            time.sleep(60)
-            continue
+# -------------------------
+# WRITE (APPEND-ONLY)
+# -------------------------
+file_exists = os.path.isfile(file_path)
 
-        r.raise_for_status()
+with open(file_path, mode="a", newline="") as f:
+    writer = csv.writer(f)
 
-# ==============================
-# EXECUÇÃO PRINCIPAL
-# ==============================
-def run():
-    rows = []
+    if not file_exists:
+        writer.writerow(["Date", "DominanceBTC"])
 
-    for date in daterange(START_DATE, END_DATE):
-        print(f"Fetching {date}")
-        dominance = fetch_btc_dominance()
+    # prevent duplicate dates
+    if file_exists:
+        with open(file_path, "r") as r:
+            if date_str in r.read():
+                print("⚠️ Dominance already recorded for today.")
+                exit(0)
 
-        rows.append({
-            "date": date,
-            "btc_dominance": dominance
-        })
+    writer.writerow([date_str, round(dominance, 2)])
 
-        # respeito total pela API pública
-        time.sleep(12)
-
-    with open(OUTPUT_FILE, "w", newline="") as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=["date", "btc_dominance"]
-        )
-        writer.writeheader()
-        writer.writerows(rows)
-
-    print(f"✅ CSV criado com sucesso: {OUTPUT_FILE}")
-
-# ==============================
-if __name__ == "__main__":
-    run()
+print(f"✅ BTC Dominance recorded: {date_str} → {dominance:.2f}%")
