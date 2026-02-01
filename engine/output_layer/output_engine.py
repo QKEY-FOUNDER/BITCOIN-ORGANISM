@@ -1,46 +1,21 @@
-from engine.utils.hardening import silence_known_warnings
-silence_known_warnings()
+from engine.output_layer.btconic_contract import btconic_contract
 
-print("🔊 OUTPUT LAYER — EXPRESSÃO CONSCIENTE")
-
-def render_output(
-    canonical_state: dict,
-    health_state: str,
-    immune: dict,
-):
+def output_btconic(canonical_state: dict) -> dict:
     """
-    Camada de expressão do organismo.
-    Apenas leitura. A expressão varia conforme saúde e ação imunitária.
+    Output Layer — Expressão pura.
+    Nenhuma decisão. Nenhuma escrita.
     """
 
-    price_state = canonical_state.get("price_state")
-    macro_state = canonical_state.get("macro_state")
-    geo_state = canonical_state.get("geo_state")
-    interpretation = canonical_state.get("interpretation")
+    frame = btconic_contract(canonical_state)
 
-    action = immune.get("action", "observe_only")
-    expression = immune.get("expression", "neutral")
+    print("🎼 BTConic — Expressão Diária")
+    print(f"Data: {canonical_state.get('date')}")
+    print(f"Health: {canonical_state.get('health_state')}")
+    print(f"Regime: {canonical_state.get('regime')}")
+    print(f"GEO: {canonical_state.get('geo_state')}")
+    print(f"Immune: {canonical_state.get('immune_action')}")
+    print("— Expression —")
+    for k, v in frame.items():
+        print(f"{k}: {v}")
 
-    print("\n🎼 Expressão do Organismo:")
-    print(f"• Preço: {price_state}")
-    print(f"• Macro: {macro_state}")
-    print(f"• GEO: {geo_state}")
-    print(f"• Interpretação: {interpretation}")
-    print(f"• Saúde: {health_state}")
-    print(f"• Ação imunitária: {action}")
-    print(f"• Expressão: {expression}")
-
-    # Expressão simbólica (placeholder evolutivo)
-    if expression == "minimal":
-        print("🔈 Som: pulso mínimo")
-    elif expression == "neutral":
-        print("🔉 Som: pulso estável")
-    elif expression == "full":
-        print("🔊 Som: expressão plena")
-    else:
-        print("🔇 Som: silêncio")
-
-    return {
-        "expression": expression,
-        "action": action,
-    }
+    return frame
