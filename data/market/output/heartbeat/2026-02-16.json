@@ -1,0 +1,49 @@
+{
+  "canonical_state": {
+    "date": "2026-02-16",
+    "geo_state": "geo_silent",
+    "interpretation": "macro_blind",
+    "macro_state": "no_dominance",
+    "price_state": "transition"
+  },
+  "date": "2026-02-16",
+  "health": {
+    "health_state": "fragile",
+    "metrics": {
+      "coverage_pct": 6.25,
+      "days_total": 16,
+      "days_with_dominance": 1,
+      "max_gap_days": 14
+    },
+    "reason": "long_run_evaluation"
+  },
+  "immune": {
+    "action": "observe_only",
+    "expression": "minimal",
+    "reason": "health_not_healthy",
+    "status": "protect"
+  },
+  "output": {
+    "date": "2026-02-16",
+    "density": "minimal",
+    "expression": "observe_only",
+    "harmonic_mode": "floating",
+    "health_state": {
+      "health_state": "fragile",
+      "metrics": {
+        "coverage_pct": 6.25,
+        "days_total": 16,
+        "days_with_dominance": 1,
+        "max_gap_days": 14
+      },
+      "reason": "long_run_evaluation"
+    },
+    "immune_action": "observe_only",
+    "intensity": 0.2,
+    "mode": "minor",
+    "regime": "unknown",
+    "regime_confirmed": false,
+    "regime_duration": 0,
+    "stability": "low"
+  }
+}

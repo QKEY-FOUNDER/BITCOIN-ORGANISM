@@ -4,14 +4,14 @@ from pathlib import Path
 print("🧠 BATIMENTO 2 — Normalização OHLCV diária")
 
 # =========================================================
-# PROJECT ROOT (07_global_reckoning_2022_infinity)
+# PROJECT ROOT (BITCOIN-ORGANISM)
 # =========================================================
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # =========================================================
 # PATHS REAIS (CONFIRMADOS NO DISCO)
 # =========================================================
-RAW_DIR = PROJECT_ROOT / "raw" / "ohlcv"
+RAW_DIR = PROJECT_ROOT / "data" / "raw" / "ohlcv"
 OUT_DIR = PROJECT_ROOT / "data" / "normalized"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

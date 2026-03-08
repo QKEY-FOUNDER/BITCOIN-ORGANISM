@@ -4,20 +4,19 @@ from pathlib import Path
 print("🧬 LAYER 2 — FUSÃO DIÁRIA (Market + Dominance)")
 
 # =========================================================
-# PROJECT ROOT (CORRETO PARA ESTE REPOSITÓRIO)
-# engine/mergers → engine → PROJECT_ROOT
+# PROJECT ROOT
 # =========================================================
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 DATA_DIR = PROJECT_ROOT / "data"
 NORMALIZED_DIR = DATA_DIR / "normalized"
-FUSED_DIR = DATA_DIR / "fused"
+FINAL_DIR = DATA_DIR / "final"
 
-FUSED_DIR.mkdir(parents=True, exist_ok=True)
+FINAL_DIR.mkdir(parents=True, exist_ok=True)
 
 OHLCV_FILE = NORMALIZED_DIR / "btc_ohlcv_daily.csv"
 DOM_FILE   = NORMALIZED_DIR / "dominance_daily.csv"
-OUT_FILE   = FUSED_DIR / "btc_daily_fused.csv"
+OUT_FILE   = FINAL_DIR / "btc_daily_full.csv"
 
 # =========================================================
 # GUARDAS CRÍTICAS
@@ -41,7 +40,7 @@ if "DominanceBTC" not in dom.columns:
     raise RuntimeError("❌ Coluna 'DominanceBTC' não encontrada")
 
 # =========================================================
-# FUSÃO PELO EIXO TEMPORAL
+# FUSÃO — OHLCV É O EIXO PRINCIPAL
 # =========================================================
 fused = (
     ohlcv
@@ -49,12 +48,16 @@ fused = (
     .sort_values("Date")
 )
 
+# Garantir que não existem dias sem preço
+fused = fused.dropna(subset=["Close"])
+
 # =========================================================
 # VALIDAÇÃO
 # =========================================================
-missing = fused["DominanceBTC"].isna().sum()
-if missing > 0:
-    print(f"⚠️ {missing} dias sem Dominance (mantidos como NaN)")
+missing_dom = fused["DominanceBTC"].isna().sum()
+
+if missing_dom > 0:
+    print(f"⚠️ {missing_dom} dias sem Dominance (mantidos como NaN)")
 
 # =========================================================
 # OUTPUT

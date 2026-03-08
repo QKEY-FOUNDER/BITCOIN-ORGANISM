@@ -1,0 +1,30 @@
+{
+  "canonical_state": {
+    "date": "2026-01-23",
+    "geo_state": "geo_silent",
+    "interpretation": "macro_blind",
+    "macro_state": "no_dominance",
+    "price_state": "transition"
+  },
+  "date": "2026-01-23",
+  "health": {
+    "health_state": "healthy",
+    "metrics": {
+      "coverage_pct": 100.0,
+      "days_total": 1,
+      "days_with_dominance": 1,
+      "max_gap_days": 0
+    },
+    "reason": "long_run_evaluation"
+  },
+  "immune": {
+    "action": "observe_only",
+    "expression": "minimal",
+    "reason": "health_not_healthy",
+    "status": "protect"
+  },
+  "output": {
+    "action": "observe_only",
+    "expression": "minimal"
+  }
+}

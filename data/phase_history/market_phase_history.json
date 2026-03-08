@@ -1,0 +1,65 @@
+[
+  {
+    "month": "bitcoin_2020_02",
+    "phase": "Transition",
+    "structural_tension": 0.598419,
+    "volatility_resonance": -0.590271,
+    "volatility_acceleration": 0.0
+  },
+  {
+    "month": "bitcoin_2020_03",
+    "phase": "Shock",
+    "structural_tension": 0.64318,
+    "volatility_resonance": 0.479409,
+    "volatility_acceleration": 1.06968
+  },
+  {
+    "month": "bitcoin_2020_04",
+    "phase": "Shock",
+    "structural_tension": 0.375013,
+    "volatility_resonance": 0.064281,
+    "volatility_acceleration": -1.484808
+  },
+  {
+    "month": "bitcoin_2021_10",
+    "phase": "Shock",
+    "structural_tension": 0.684327,
+    "volatility_resonance": -0.884243,
+    "volatility_acceleration": -0.5333960000000001
+  },
+  {
+    "month": "bitcoin_2021_11",
+    "phase": "Shock",
+    "structural_tension": 0.569907,
+    "volatility_resonance": -0.446063,
+    "volatility_acceleration": 1.386704
+  },
+  {
+    "month": "bitcoin_2021_12",
+    "phase": "Transition",
+    "structural_tension": 0.36488,
+    "volatility_resonance": -0.091635,
+    "volatility_acceleration": -0.08375200000000005
+  },
+  {
+    "month": "bitcoin_2022_05",
+    "phase": "Transition",
+    "structural_tension": 0.688796,
+    "volatility_resonance": 0.880385,
+    "volatility_acceleration": 0.617592
+  },
+  {
+    "month": "bitcoin_2022_06",
+    "phase": "Shock",
+    "structural_tension": 0.665285,
+    "volatility_resonance": 0.647407,
+    "volatility_acceleration": -1.204998
+  },
+  {
+    "month": "bitcoin_2022_07",
+    "phase": "Shock",
+    "structural_tension": 0.670784,
+    "volatility_resonance": 0.411339,
+    "volatility_acceleration": -0.003089999999999926
+  }
+]

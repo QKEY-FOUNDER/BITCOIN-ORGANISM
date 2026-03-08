@@ -1,0 +1,11 @@
+Sandbox GEO Data
+================
+
+Estes ficheiros foram criados manualmente para testes
+de integração do GEO Engine.
+
+Não fazem parte do fluxo automático (cron).
+Não devem ser lidos pelo sistema em produção.
+
+Data de arquivo: 2026-01
+Responsável: Mihail Chiosa

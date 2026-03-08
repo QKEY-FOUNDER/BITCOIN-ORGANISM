@@ -1,0 +1,14 @@
+{
+  "btc_ohlcv_daily": {
+    "file": "/Users/mihailchiosa/organisms/BITCOIN-ORGANISM/data/07_global_reckoning_2022_infinity/data/normalized/btc_ohlcv_daily.csv",
+    "sha256": "13413eaa81332135438e84af9c6e5dca4eda5bbf5e4dd81a50b1d777a50da151"
+  },
+  "dominance_daily": {
+    "file": "/Users/mihailchiosa/organisms/BITCOIN-ORGANISM/data/07_global_reckoning_2022_infinity/data/normalized/dominance_daily.csv",
+    "sha256": "574ad4b1ecc725aec55a5f529731c0b643f94d6658dddf0ae7fe7871eeacbe6d"
+  },
+  "btc_daily_fused": {
+    "file": "/Users/mihailchiosa/organisms/BITCOIN-ORGANISM/data/07_global_reckoning_2022_infinity/data/fused/btc_daily_fused.csv",
+    "sha256": "f4221f00ba03ff037ed56a6e20235c044bf5537d63db742beba5ea682bbc47ec"
+  }
+}

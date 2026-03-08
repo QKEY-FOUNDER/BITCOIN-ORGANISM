@@ -1,0 +1,4 @@
+Date,regime,bpm,dissonance,risk_score,stress_trend,volatility_score,regime_confidence
+2026-02-22,calm,60,0.0,0.0,flat,0.0,1.0
+2026-02-22 00:00:00,calm,60,0.0,0.0,flat,0.0,1.0
+2026-02-25 00:00:00,calm,60,0.0,0.0,flat,0.0,1.0

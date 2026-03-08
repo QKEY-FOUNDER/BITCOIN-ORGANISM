@@ -1,0 +1,22 @@
+{
+  "price_state": {
+    "value": "transition",
+    "days": 3,
+    "since": "2026-01-23"
+  },
+  "macro_state": {
+    "value": "no_dominance",
+    "days": 3,
+    "since": "2026-01-23"
+  },
+  "geo_state": {
+    "value": "geo_silent",
+    "days": 3,
+    "since": "2026-01-23"
+  },
+  "interpretation": {
+    "value": "macro_blind",
+    "days": 3,
+    "since": "2026-01-23"
+  }
+}

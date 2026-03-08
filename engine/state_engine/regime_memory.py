@@ -1,58 +1,81 @@
-# engine/state_engine/regime_memory.py
-
-from pathlib import Path
 import json
+import math
+from pathlib import Path
 
 
-REGIME_KEYS = [
-    "price_state",
-    "macro_state",
-    "geo_state",
-    "interpretation",
-]
+# =========================================================
+# REGIME MEMORY — Persistência Temporal
+# Consolidação logística contínua
+# =========================================================
+
+BASE_PATH = Path(__file__).resolve().parents[2]
+
+MEMORY_DIR = BASE_PATH / "data" / "memory"
+MEMORY_DIR.mkdir(parents=True, exist_ok=True)
+
+MEMORY_FILE = MEMORY_DIR / "regime_memory.json"
 
 
-def update_regime_memory(canonical_state: dict):
+# ---------------------------------------------------------
+# LOAD MEMORY
+# ---------------------------------------------------------
+def load_memory() -> dict:
+    if MEMORY_FILE.exists():
+        with open(MEMORY_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+
+# ---------------------------------------------------------
+# SAVE MEMORY
+# ---------------------------------------------------------
+def save_memory(memory: dict):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(memory, f, indent=4)
+
+
+# ---------------------------------------------------------
+# UPDATE REGIME MEMORY
+# ---------------------------------------------------------
+def update_regime_memory(canonical_state: dict) -> dict:
     """
-    Mantém memória de regimes persistentes.
-    Conta N dias consecutivos no mesmo estado.
+    Atualiza persistência temporal do regime
+    com maturação logística orgânica.
     """
 
-    base_path = Path(__file__).resolve().parents[2]
-    memory_dir = base_path / "data" / "memory"
-    memory_dir.mkdir(parents=True, exist_ok=True)
+    memory = load_memory()
 
-    memory_file = memory_dir / "regime_memory.json"
+    current_regime = canonical_state.get("interpretation", "neutral")
+    today = canonical_state.get("date")
 
-    today = canonical_state["date"]
+    # Inicialização
+    if "regime" not in memory:
+        memory["regime"] = {
+            "value": current_regime,
+            "days": 1,
+            "last_date": today
+        }
 
-    if memory_file.exists():
-        with open(memory_file, "r", encoding="utf-8") as f:
-            memory = json.load(f)
+    # Continuidade ou reset
     else:
-        memory = {}
-
-    updated = {}
-
-    for key in REGIME_KEYS:
-        value = canonical_state.get(key)
-
-        previous = memory.get(key)
-
-        if previous and previous["value"] == value:
-            updated[key] = {
-                "value": value,
-                "days": previous["days"] + 1,
-                "since": previous["since"],
-            }
+        if memory["regime"]["value"] == current_regime:
+            memory["regime"]["days"] += 1
         else:
-            updated[key] = {
-                "value": value,
-                "days": 1,
-                "since": today,
-            }
+            memory["regime"]["value"] = current_regime
+            memory["regime"]["days"] = 1
 
-    with open(memory_file, "w", encoding="utf-8") as f:
-        json.dump(updated, f, indent=2, ensure_ascii=False)
+        memory["regime"]["last_date"] = today
 
-    return updated
+    # Sensibilidade Logística
+    days = memory["regime"]["days"]
+
+    k = 0.6
+    center = 6
+
+    maturity = 1 / (1 + math.exp(-k * (days - center)))
+
+    memory["regime"]["stability_ratio"] = round(maturity, 4)
+
+    save_memory(memory)
+
+    return memory

@@ -1,42 +1,42 @@
-CSV_PATH = "..."
-
-from immune_system.organism_validator import evaluate_health
-from geo_engine.geo_index import get_geo_vector
-from geo_engine.geo_traits import combine_geo_traits
-
-geo_vector = get_geo_vector(CSV_PATH)
-geo_traits = combine_geo_traits(geo_vector)
-
 import csv
 import math
 import wave
 import struct
 
-# -----------------------------
-# CONFIG
-# -----------------------------
+from engine.immune_system.organism_validator import evaluate_health
+from geo_engine.geo_index import get_geo_vector
+from geo_engine.geo_traits import combine_geo_traits
+from engine.geo_engine.intraday_geo import compute_intraday_geo_vector
 
-CSV_PATH = "data/06_institutional_awakening_2020_2022/bitcoin_2020_01.csv"
+
+# --------------------------------------------------
+# CONFIG
+# --------------------------------------------------
+
+CSV_PATH = "data/06_Despertar_Institucional_2020_2022/bitcoin_2020_01.csv"
 
 SAMPLE_RATE = 44100
-BASE_FREQ = 293.66   # D4
+BASE_FREQ = 293.66  # D4
 DNA_INTERVALS = [0, 7, 3, 0, -2, 0]
 
-# -----------------------------
+
+# --------------------------------------------------
 # HELPERS
-# -----------------------------
+# --------------------------------------------------
 
 def semitone_to_freq(base, semitone):
     return base * (2 ** (semitone / 12))
+
 
 def normalize(x, a, b):
     if b - a == 0:
         return 0.5
     return (x - a) / (b - a)
 
-# -----------------------------
+
+# --------------------------------------------------
 # LOAD CSV
-# -----------------------------
+# --------------------------------------------------
 
 rows = []
 with open(CSV_PATH, newline="") as f:
@@ -44,35 +44,44 @@ with open(CSV_PATH, newline="") as f:
     for r in reader:
         rows.append(r)
 
-opens  = [float(r["Open"]) for r in rows]
-highs  = [float(r["High"]) for r in rows]
-lows   = [float(r["Low"]) for r in rows]
+opens = [float(r["Open"]) for r in rows]
+highs = [float(r["High"]) for r in rows]
+lows = [float(r["Low"]) for r in rows]
 closes = [float(r["Close"]) for r in rows]
-vols   = [float(r["Volume"]) for r in rows]
-doms   = [float(r["DominanceBTC"]) for r in rows]
+vols = [float(r["Volume"]) for r in rows]
+def extract_dominance(row):
+    if "DominanceBTC" in row:
+        return float(row["DominanceBTC"])
+    if "BTC_Dominance" in row:
+        return float(row["BTC_Dominance"])
+    return 50.0  # fallback neutro
+
+doms = [extract_dominance(r) for r in rows]
 
 vol_min, vol_max = min(vols), max(vols)
+
 stress_raw = [h - l for h, l in zip(highs, lows)]
 smin, smax = min(stress_raw), max(stress_raw)
 
-# -----------------------------
-# GEO SYSTEM
-# -----------------------------
 
-geo_vector = compute_geo_vector(CSV_PATH)
+# --------------------------------------------------
+# GEO SYSTEM
+# --------------------------------------------------
+
+geo_vector = get_geo_vector(CSV_PATH)
 geo_traits = combine_geo_traits(geo_vector)
 intraday_geo = compute_intraday_geo_vector()
 
-geo_bpm        = geo_traits["bpm"]
+geo_bpm = geo_traits["bpm"]
 geo_brightness = geo_traits["brightness"]
 geo_aggression = geo_traits["harmonic_aggression"]
-geo_stability  = geo_traits["stability"]
 
-SECONDS_PER_DAY = 60.0 / geo_bpm * 8   # 8 beats per candle
+SECONDS_PER_DAY = 60.0 / geo_bpm * 8
 
-# -----------------------------
+
+# --------------------------------------------------
 # SYNTHESIS
-# -----------------------------
+# --------------------------------------------------
 
 audio = []
 
@@ -83,12 +92,10 @@ for i in range(len(rows)):
     stress = normalize(stress_raw[i], smin, smax)
     confidence = doms[i] / 100.0
 
-    geo = get_geo_vector(CSV_PATH)
-    health = evaluate_health(stress, vols[i], geo)
+    health = evaluate_health(stress, vols[i], geo_vector)
 
-    # cardiac trigger from price acceleration
     if i > 0:
-        price_velocity = abs(closes[i] - closes[i-1]) / closes[i-1]
+        price_velocity = abs(closes[i] - closes[i - 1]) / closes[i - 1]
     else:
         price_velocity = 0.0
 
@@ -111,10 +118,11 @@ for i in range(len(rows)):
     samples = int(SAMPLE_RATE * SECONDS_PER_DAY)
 
     for n in range(samples):
+
         t = n / SAMPLE_RATE
 
-        # heart rate from stress
         heart_rate = geo_bpm * (1 + stress * 2)
+
         if tachy:
             heart_rate *= 1.5
         if arrhythmia:
@@ -130,17 +138,23 @@ for i in range(len(rows)):
         else:
             rhythm_gate = 1 if heartbeat > 0 else 0.3
 
-        # intraday region
         hour = int((n / samples) * 24)
         hour_geo = intraday_geo.get(hour, {})
         local_weight = max(hour_geo.values()) if hour_geo else 1.0
 
-        # rhythmic pulse driven by geopolitics
         v = 0.0
+
+        geo_bias = geo_vector.get("north_america", 0.25) - geo_vector.get("east_asia", 0.25)
+
         for interval in DNA_INTERVALS:
-            geo_bias = geo.get("north_america", 0.25) - geo.get("east_asia", 0.25)
-            freq = semitone_to_freq(BASE_FREQ, interval + pitch + geo_bias * 4)
+
+            freq = semitone_to_freq(
+                BASE_FREQ,
+                interval + pitch + geo_bias * 4
+            )
+
             freq += stress * (5 + geo_aggression * 5) * math.sin(2 * math.pi * 0.5 * t)
+
             v += math.sin(2 * math.pi * freq * t)
 
         v /= len(DNA_INTERVALS)
@@ -149,14 +163,18 @@ for i in range(len(rows)):
         env = life * rhythm_gate * local_weight
 
         v *= env * amp * gravity
+
         audio.append(v)
 
-# -----------------------------
+
+# --------------------------------------------------
 # NORMALIZE & WRITE WAV
-# -----------------------------
+# --------------------------------------------------
 
 mx = max(abs(x) for x in audio)
-audio = [x / mx for x in audio]
+
+if mx > 0:
+    audio = [x / mx for x in audio]
 
 wav = wave.open("bitcoin_organism_jan_2020.wav", "w")
 wav.setnchannels(1)

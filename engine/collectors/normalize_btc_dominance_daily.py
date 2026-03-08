@@ -1,55 +1,101 @@
-import pandas as pd
 from pathlib import Path
+import pandas as pd
 
-print("🫀 BATIMENTO 2 — Normalização BTC Dominance diária")
-
-# =========================================================
-# PROJECT ROOT (ABSOLUTO, ÚNICO)
-# =========================================================
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+print("📊 NORMALIZAÇÃO BTC DOMINANCE — HÍBRIDO PROFISSIONAL")
+print("=" * 55)
 
 # =========================================================
-# PATHS CANÓNICOS
+# ROOT
 # =========================================================
-RAW_DIR = PROJECT_ROOT / "data" / "raw" / "dominance"
-OUT_DIR = PROJECT_ROOT / "data" / "normalized"
-OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-OUT_FILE = OUT_DIR / "dominance_daily.csv"
+BASE_PATH = Path(__file__).resolve().parents[2]
+RAW_DIR = BASE_PATH / "data/raw/dominance"
+OUT_PATH = BASE_PATH / "data/normalized/dominance_daily.csv"
+
+RAW_DIR.mkdir(parents=True, exist_ok=True)
 
 # =========================================================
-# LOAD RAW FILES
+# 1️⃣ HISTÓRICO MANUAL (PRIORIDADE MÁXIMA)
 # =========================================================
-files = sorted(RAW_DIR.glob("btc_dominance_*.csv"))
 
-if not files:
-    raise RuntimeError(f"❌ Nenhum ficheiro encontrado em {RAW_DIR}")
+historical_file = RAW_DIR / "btc_dominance_historical.csv"
 
-frames = []
+if historical_file.exists():
+    df_hist = pd.read_csv(historical_file)
 
-for f in files:
+    if not {"Date", "DominanceBTC"}.issubset(df_hist.columns):
+        raise RuntimeError("❌ Histórico manual inválido")
+
+    df_hist["Date"] = pd.to_datetime(df_hist["Date"])
+    df_hist["source"] = "historical"
+
+    print(f"✔ Histórico manual carregado: {len(df_hist)} registos")
+else:
+    df_hist = pd.DataFrame(columns=["Date", "DominanceBTC", "source"])
+    print("ℹ Sem histórico manual")
+
+# =========================================================
+# 2️⃣ STREAM DIÁRIO
+# =========================================================
+
+stream_files = sorted(RAW_DIR.glob("btc_dominance_*.csv"))
+
+stream_rows = []
+
+for f in stream_files:
+    if f.name == "btc_dominance_historical.csv":
+        continue
+
     df = pd.read_csv(f)
 
-    df.columns = [c.strip() for c in df.columns]
+    if df.empty:
+        continue
 
-    if "Date" not in df.columns or "DominanceBTC" not in df.columns:
-        raise RuntimeError(f"❌ Colunas inválidas em {f.name}")
+    if not {"Date", "DominanceBTC"}.issubset(df.columns):
+        print(f"⚠ Ignorado (colunas inválidas): {f.name}")
+        continue
 
-    df["Date"] = pd.to_datetime(df["Date"], utc=True).dt.date
-    frames.append(df[["Date", "DominanceBTC"]])
+    df["Date"] = pd.to_datetime(df["Date"])
+    df["source"] = "stream"
+
+    stream_rows.append(df)
+
+if stream_rows:
+    df_stream = pd.concat(stream_rows, ignore_index=True)
+    print(f"✔ Stream diário carregado: {len(df_stream)} registos")
+else:
+    df_stream = pd.DataFrame(columns=["Date", "DominanceBTC", "source"])
+    print("ℹ Sem stream diário")
 
 # =========================================================
-# CONCAT + CLEAN
+# 3️⃣ CONSOLIDAÇÃO
 # =========================================================
-merged = (
-    pd.concat(frames, ignore_index=True)
-      .drop_duplicates(subset=["Date"])
-      .sort_values("Date")
+
+combined = pd.concat([df_stream, df_hist], ignore_index=True)
+
+if combined.empty:
+    raise RuntimeError("❌ Nenhum dado dominance encontrado")
+
+# Prioridade: histórico manual
+combined = combined.sort_values(
+    by=["Date", "source"],
+    ascending=[True, False]  # historical > stream
 )
 
-merged.to_csv(OUT_FILE, index=False)
+combined = combined.drop_duplicates(subset=["Date"], keep="first")
 
-print("✅ Dominance diária normalizada criada com sucesso")
-print(f"📁 Ficheiro: {OUT_FILE}")
-print(f"📊 Registos: {len(merged)}")
-print(f"📆 Intervalo: {merged['Date'].min()} → {merged['Date'].max()}")
+combined = combined.sort_values("Date")
+
+# Remover coluna técnica
+final_df = combined[["Date", "DominanceBTC"]]
+
+# =========================================================
+# 4️⃣ EXPORT
+# =========================================================
+
+final_df.to_csv(OUT_PATH, index=False)
+
+print("✅ Dominance consolidado com sucesso")
+print(f"📁 Ficheiro: {OUT_PATH}")
+print(f"📊 Registos finais: {len(final_df)}")
+print(f"📆 Intervalo: {final_df['Date'].min().date()} → {final_df['Date'].max().date()}")

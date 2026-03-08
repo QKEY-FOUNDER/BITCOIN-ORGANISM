@@ -3,20 +3,23 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime, timezone
 
-print("🫀 BATIMENTO — Dominance BTC diária (canónico)")
+print("🫀 BATIMENTO — Dominance BTC diária (RAW)")
 
 # =========================================================
-# PROJECT ROOT (único e absoluto)
+# PROJECT ROOT
 # =========================================================
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # =========================================================
-# OUTPUT
+# RAW OUTPUT DIRECTORY
 # =========================================================
-OUT_DIR = PROJECT_ROOT / "data" / "normalized"
-OUT_DIR.mkdir(parents=True, exist_ok=True)
+RAW_DIR = PROJECT_ROOT / "engine" / "collectors" / "data" / "raw" / "dominance"
+RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-OUT_FILE = OUT_DIR / "dominance_daily.csv"
+# Ficheiro mensal (crescimento orgânico acumulativo)
+today = datetime.now(timezone.utc).date()
+year_month = today.strftime("%Y_%m")
+OUT_FILE = RAW_DIR / f"btc_dominance_{year_month}_raw.csv"
 
 # =========================================================
 # FETCH DATA (CoinGecko)
@@ -27,11 +30,11 @@ resp = requests.get(url, timeout=30)
 if resp.status_code != 200:
     raise RuntimeError("❌ Falha ao obter dados do CoinGecko")
 
-data = resp.json()["data"]
+data = resp.json().get("data", {})
+dominance = data.get("market_cap_percentage", {}).get("btc")
 
-dominance = data["market_cap_percentage"]["btc"]
-
-today = datetime.now(timezone.utc).date()
+if dominance is None:
+    raise RuntimeError("❌ Dominance BTC não encontrada na resposta")
 
 row = {
     "Date": today.isoformat(),
@@ -39,13 +42,15 @@ row = {
 }
 
 # =========================================================
-# APPEND (ou criar)
+# APPEND OR CREATE (RAW)
 # =========================================================
 if OUT_FILE.exists():
     df = pd.read_csv(OUT_FILE)
+
     if today.isoformat() in df["Date"].values:
-        print("⚠️ Dominance de hoje já existe — ignorado")
+        print("⚠️ Dominance de hoje já existe no RAW — ignorado")
         exit(0)
+
     df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
 else:
     df = pd.DataFrame([row])
@@ -53,7 +58,7 @@ else:
 df = df.sort_values("Date")
 df.to_csv(OUT_FILE, index=False)
 
-print("✅ Dominance diária registada com sucesso")
+print("✅ Dominance RAW registada com sucesso")
 print(f"📅 Date: {row['Date']}")
 print(f"📊 DominanceBTC: {row['DominanceBTC']}")
-print(f"📁 Ficheiro: {OUT_FILE}")
+print(f"📁 Ficheiro RAW: {OUT_FILE}")

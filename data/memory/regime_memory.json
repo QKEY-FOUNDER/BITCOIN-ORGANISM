@@ -1,0 +1,8 @@
+{
+    "regime": {
+        "value": "macro_blind",
+        "days": 9,
+        "last_date": "2026-02-16",
+        "stability_ratio": 0.8581
+    }
+}

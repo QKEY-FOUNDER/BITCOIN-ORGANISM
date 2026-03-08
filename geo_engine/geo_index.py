@@ -1,10 +1,7 @@
 import os
 import csv
-import requests
-from datetime import datetime
 from geo_engine.region_map import REGIONS
 
-BINANCE_KLINES = "https://api.binance.com/api/v3/klines"
 
 # Pasta onde a memória geográfica histórica vive
 DATA_GEO_PATH = "data_geo/monthly_region_dominance"
@@ -32,6 +29,7 @@ def load_historical_geo(month):
         return None
 
     geo = {}
+
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
         for r in reader:
@@ -41,59 +39,24 @@ def load_historical_geo(month):
 
 
 # -----------------------------
-# Live Binance perception
-# -----------------------------
-
-def fetch_intraday_volume():
-    params = {
-        "symbol": "BTCUSDT",
-        "interval": "1h",
-        "limit": 24
-    }
-    return requests.get(BINANCE_KLINES, params=params).json()
-
-
-def compute_live_geo():
-    candles = fetch_intraday_volume()
-
-    scores = {r: 0.0 for r in REGIONS}
-
-    for c in candles:
-        ts = int(c[0]) / 1000
-        volume = float(c[5])
-        hour = datetime.utcfromtimestamp(ts).hour
-
-        for region, meta in REGIONS.items():
-            start, end = meta["hours"]
-
-            # janela normal
-            if start <= end:
-                active = start <= hour < end
-            else:
-                # cruza a meia-noite
-                active = hour >= start or hour < end
-
-            weight = 1.0 if active else 0.2
-            scores[region] += volume * weight
-
-    total = sum(scores.values())
-    if total == 0:
-        return scores
-
-    return {r: scores[r] / total for r in scores}
-
-
-# -----------------------------
 # Unified geographic brain
 # -----------------------------
 
 def get_geo_vector(csv_path):
+
     month = extract_month_from_csv(csv_path)
 
-    # 1. Tenta memória histórica
+    # 1️⃣ Tenta memória histórica
     historical = load_historical_geo(month)
     if historical:
         return historical
 
-    # 2. Caso contrário, vê o mundo em tempo real
-    return compute_live_geo()
+    # 2️⃣ Replay histórico determinístico (sem chamadas externas)
+    total_regions = len(REGIONS)
+
+    if total_regions == 0:
+        return {}
+
+    neutral_weight = 1.0 / total_regions
+
+    return {region: neutral_weight for region in REGIONS}

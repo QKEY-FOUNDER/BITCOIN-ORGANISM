@@ -1,0 +1,46 @@
+{
+  "phases": [
+    {
+      "id": 1,
+      "name": "Semente Estrutural",
+      "range": "2010-2012",
+      "description": "Formação inicial da rede, baixa liquidez, descoberta de preço."
+    },
+    {
+      "id": 2,
+      "name": "Teste de Fogo",
+      "range": "2013",
+      "description": "Primeira bolha significativa e crash estrutural."
+    },
+    {
+      "id": 3,
+      "name": "Guerra e Consolidação",
+      "range": "2014-2016",
+      "description": "Fork wars, debates de escalabilidade e fortalecimento da rede."
+    },
+    {
+      "id": 4,
+      "name": "Legitimação Global",
+      "range": "2017",
+      "description": "Entrada massiva de capital e reconhecimento global."
+    },
+    {
+      "id": 5,
+      "name": "Trauma e Maturação",
+      "range": "2018-2020",
+      "description": "Bear market prolongado e consolidação estrutural."
+    },
+    {
+      "id": 6,
+      "name": "Despertar Institucional",
+      "range": "2020-2022",
+      "description": "Entrada de instituições e integração macroeconómica."
+    },
+    {
+      "id": 7,
+      "name": "Reconfiguração Global",
+      "range": "2022+",
+      "description": "Reestruturação do mercado pós-liquidez global e novo ciclo estrutural."
+    }
+  ]
+}

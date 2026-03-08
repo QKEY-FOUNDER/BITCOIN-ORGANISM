@@ -1,0 +1,30 @@
+{
+    "regime": "calm",
+    "scale": [
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "A",
+        "B"
+    ],
+    "bpm": 69,
+    "intensity": 0.1,
+    "dissonance": 0.0,
+    "notes": [
+        "E",
+        "F",
+        "G",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+    ],
+    "risk_score": 0.0,
+    "stress_trend": "flat",
+    "volatility_score": 0.0,
+    "regime_confidence": 1.0,
+    "mutation_bias": "expansion"
+}
