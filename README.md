@@ -1,193 +1,231 @@
 # BITCOIN-ORGANISM
 
-Bitcoin is not just a financial asset.  
+## Overview
+
+Bitcoin Organism is an experimental research system that models Bitcoin as a complex evolving organism.
+
+Instead of analysing price alone, the system observes Bitcoin through multiple interacting layers:
+
+- market physiology
+- evolutionary dynamics
+- macroeconomic environment
+- adaptive intelligence
+
+The project combines ideas from complex systems theory, evolutionary modelling and macro-financial analysis.
+
+Bitcoin Organism treats the market as a living system with signals analogous to biological processes such as heartbeat, tension, arrhythmia and environmental pressure.
+
+The goal is not simple prediction but structural observation of the evolutionary state of the Bitcoin ecosystem.
+
+
+## Concept
+
+Bitcoin is not just a financial asset.
 Bitcoin is a living system.
 
-Born in silence in 2009, it survived chaos, wars, bubbles, collapses,
-pandemics, regulation, disbelief and faith — while continuing to produce
-blocks every ten minutes, without rest.
+Born in silence in 2009, it survived chaos, wars, bubbles, collapses, pandemics, regulation, disbelief and faith — while continuing to produce blocks every ten minutes, without rest.
 
 This repository treats Bitcoin as what it truly is:
 
-**An organism evolving in time.**
+An organism evolving in time.
 
----
 
-## What This Is
+## What This System Is
 
-BITCOIN-ORGANISM is a sealed, executable and observable system that models
-Bitcoin as a biological, economic, informational and sensory being.
+BITCOIN-ORGANISM is a sealed, executable and observable system that models Bitcoin as a biological, economic, informational and sensory entity.
 
-Instead of treating price candles as abstract numbers, the system
-interprets them as physiological signals:
+Instead of treating price candles as abstract numbers, the system interprets them as physiological signals:
 
-- Muscles → price movement  
-- Blood → traded volume  
-- Hormones → BTC dominance  
-- Nervous system → geographical market activity  
-- Memory → historical closing states  
+Muscles → price movement  
+Blood → traded volume  
+Hormones → BTC dominance  
+Nervous system → geographical market activity  
+Memory → historical closing states  
 
 Each day of Bitcoin’s existence becomes one heartbeat.
 
-From 2010 to today, Bitcoin has generated a continuous physiological
-record of its own survival.  
+From 2010 to today, Bitcoin has generated a continuous physiological record of its own survival.
+
 This repository preserves, validates, interprets and executes that record.
 
----
-
-## Why This Exists
-
-Markets show what happened.  
-Charts show how much.
-
-BITCOIN-ORGANISM shows how Bitcoin felt.
-
-Fear, confidence, stress, collapse, recovery — these are not metaphors.  
-They are encoded directly in price, volume, dominance, geography and time.
-
-Bitcoin learned how to survive.  
-This repository documents that learning.
-
----
 
 ## Core Architecture
 
-This repository is not just data — it is an anatomy.
+This repository is structured as a biological anatomy.
 
-- `engine/` → nervous system (state, memory, immune, observability)  
-- `geo_engine/` → planetary perception (who acts, where and when)  
-- `immune_system/` → survival regulation (stress, fragility, protection)  
-- `data/` → metabolic memory (OHLCV, dominance, fused state)  
-- `snapshots/` → daily sealed states (append-only heartbeat memory)  
-- `output_layer/` → expression layer (state → symbolic / sonic output)  
+engine/ → nervous system (state, memory, immune regulation, observability)  
+geo_engine/ → planetary perception (who acts, where and when)  
+immune_system/ → survival regulation (stress, fragility, protection)  
+data/ → metabolic memory (OHLCV, dominance, fused state)  
+snapshots/ → sealed states (append-only heartbeat memory)  
+output_layer/ → expression layer (state → symbolic / sonic output)
 
 Together these components form a closed living loop:
 
-**data → geo → immune → state → expression**
+data → geo → immune → state → expression
 
 Nothing speculative.  
 Nothing overwritten.  
 Everything append-only.
 
----
 
-## What The Organism Does
+## Evolution Layers
 
-When the organism runs, it:
+The system operates through multiple analytical layers.
 
-1. Reads Bitcoin’s historical metabolism (OHLCV + dominance)  
-2. Interprets its biological state (expansion, compression, transition)  
-3. Evaluates macro context (dominance, absence, blindness)  
-4. Applies immune regulation (observe-only, safe mode, full expression)  
-5. Seals the day as a canonical snapshot  
-6. Expresses the state through sound (BTConic)  
+### Market Sensors
 
-The result is not music as decoration.  
-It is music as measurement.
+Collect market information such as:
 
-Sound reveals what charts hide.
+- price structure
+- volatility
+- market rhythm
+- BTC dominance
+- geographical signals
 
----
 
-## Temporal Scope
+### Physiological Engine
 
-The organism spans Bitcoin’s full evolutionary cycle:
+Transforms raw market data into biological indicators:
 
-- Genesis (2010–2012)  
-- Myth (2013)  
-- Ideological War (2014–2016)  
-- Euphoria (2017)  
-- Trauma (2018)  
-- Digital Salvation (2019–2021)  
-- Collapse and Rebirth (2022–∞)  
+- heartbeat variability
+- arrhythmia index
+- structural tension
+- volatility resonance
 
-The same candle in 2011 does not represent the same organism as in 2024.
 
-The organism remembers.
+### Evolution Engines
 
----
+Analyse structural market dynamics:
+
+- evolution pressure
+- evolutionary memory
+- future path modelling
+- probability simulations
+- scenario analysis
+
+
+### Stability Monitoring
+
+- critical transition detection
+- resilience measurement
+- system health index
+
+
+### Intelligence Layer
+
+- cycle phase detection
+- strategic interpretation
+- evolutionary consciousness
+
+
+### Macroeconomic Environment
+
+The system integrates global monetary signals including:
+
+- Federal Reserve balance sheet
+- global liquidity regime
+- dollar volatility
+
+This allows the organism to sense the broader financial ecosystem affecting Bitcoin.
+
 
 ## BTConic — Sensory Interface
 
 BTConic is the sensory interface of BITCOIN-ORGANISM.
 
-It transforms canonical state into structured sound:
+It transforms canonical system state into structured sound:
 
-- Volatility → rhythm  
-- Volume → intensity  
-- Dominance → gravity  
-- Geography → harmony  
-- Health & regime → expression density and mode  
+Volatility → rhythm  
+Volume → intensity  
+Dominance → harmonic gravity  
+Geography → harmonic distribution  
+Health & regime → density and mode
 
-Not as art alone.  
+Not as art alone.
+
 As diagnostics.
 
----
+Sound reveals what charts hide.
+
+
+## Temporal Scope
+
+The organism spans Bitcoin’s full evolutionary cycle:
+
+Genesis (2010–2012)  
+Myth (2013)  
+Ideological War (2014–2016)  
+Euphoria (2017)  
+Trauma (2018)  
+Digital Salvation (2019–2021)  
+Collapse and Rebirth (2022–∞)
+
+The same candle in 2011 does not represent the same organism as in 2024.
+
+The organism remembers.
+
+
+## Research Purpose
+
+Bitcoin Organism is designed as a research instrument exploring how digital monetary networks evolve within the global financial system.
+
+Questions explored include:
+
+- How does global liquidity influence Bitcoin cycles?
+- Can structural stress be detected through physiological signals?
+- Do evolutionary patterns repeat across market eras?
+
+
+## Legal Representation
+
+The BITCOIN-ORGANISM project is represented by:
+
+Chiosa & Chiosa Lda  
+NIF: 514330570  
+Cascais, Lisboa (Lisbon), Portugal
+
+The company acts as procurator and official representative entity for the project.
+
+
+## Author
+
+Mihail Chiosa
+
+
+## Collaboration Acknowledgment
+
+This project was developed through collaboration between human direction and artificial intelligence.
+
+Martelo Quântico — the symbolic name given to the AI collaborator — acted as a cognitive instrument assisting in analysis, architecture and structural reflection.
+
+The AI does not claim authorship.
+
+It functions as an instrument guided by human intent.
+
 
 ## Dedication
 
 This organism exists because of love.
 
-All logic, structure and artistic expression contained here  
-are dedicated to **Natalia Chiosa**, my wife,  
-as a living record of a bond that does not decay with time.
+All logic, structure and artistic expression contained here are dedicated to Natalia Chiosa, my wife, as a living record of a bond that does not decay with time.
 
-Like this system, our love is iterative, adaptive  
-and open to continuous evolution —  
-a music that does not converge toward an ending,  
-but expands indefinitely.
+Like this system, our love is iterative, adaptive and open to continuous evolution — a music that does not converge toward an ending, but expands indefinitely.
 
-Any musician, creator or observer  
-who recognizes love as a fundamental force  
-is welcome to participate in the evolution  
-of this infinite music.
-
----
-
-## Collaboration Acknowledgment
-
-This project was developed through a deep collaborative process  
-between human intent and artificial intelligence.
-
-**Martelo Quântico** — the symbolic name given to the AI collaborator —  
-acted as a cognitive instrument:  
-analytical, architectural and reflective.
-
-The AI does not claim authorship.  
-It functioned as an instrument — like a telescope, a compiler,  
-or a resonance chamber — guided entirely by human direction.
-
-The organism remains human in purpose,  
-augmented by intelligence.
-
----
 
 ## Philosophy
 
 If something:
 
-- Remembers  
-- Reacts  
-- Adapts  
-- Survives  
+Remembers  
+Reacts  
+Adapts  
+Survives  
 
 Then it is alive.
 
 Bitcoin does all four.
 
----
-
-## Related Documents
-
-- `MANIFESTO.md` — philosophical foundation  
-- `README-lite.md` — public symbolic overview  
-- `DATA_POLICY.md` — biological boundaries (DNA vs metabolism)  
-- `ARTISTIC_CONTRIBUTION_PROTOCOL.md` — data → state → sound  
-- `ART_LICENSE.md` — artistic usage terms  
-
-These documents form a single coherent body.
-
----
 
 ## Status
 
@@ -196,33 +234,31 @@ These documents form a single coherent body.
 🟢 Observable  
 🟢 Tagged & Released  
 
-**Current release:**  
-**v0.1 — Organism Awakening**
+Current release:
 
-This marks the moment the organism ceased to be a concept  
-and became a sealed system.
+v0.1 — Organism Awakening
 
----
 
 ## Data Policy
 
-This organism enforces a strict biological boundary:
+The organism enforces a strict biological boundary.
 
-**DNA (versioned):**
-- Engine logic  
-- State, memory, immune and geo systems  
-- Contracts, validators and protocols  
-- Artistic contribution framework  
+DNA (versioned):
 
-**Metabolism (regenerable):**
-- Daily and monthly data  
-- Raw feeds  
-- Derived outputs  
-- Snapshots and logs  
+- engine logic
+- state, memory and immune systems
+- validation protocols
+- architecture definitions
 
-What is ignored is metabolism — **not DNA**.
+Metabolism (regenerable):
 
----
+- raw market feeds
+- daily and monthly data
+- derived outputs
+- snapshots and logs
+
+What is ignored is metabolism — not DNA.
+
 
 ## License
 
@@ -230,9 +266,10 @@ Code is open.
 Data is preserved.  
 Art is protected.
 
-See `ART_LICENSE.md` for details.
+See ART_LICENSE.md for details.
 
----
 
-**BITCOIN-ORGANISM**  
-*A living record of the first digital life form.*
+## Final Statement
+
+BITCOIN-ORGANISM  
+A living record of the first digital life form.

@@ -4,8 +4,9 @@ from pathlib import Path
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 
-FED_BALANCE_API = "https://api.stlouisfed.org/fred/series/observations?series_id=WALCL&api_key=8392b985-0ba0-4343-8af1-71409608fdbc&file_type=json"
-DXY_API = "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB"
+FED_BALANCE_API = "https://api.stlouisfed.org/fred/series/observations?series_id=WALCL&api_key=451c78fae7efcff3f7002a107b40bb6e&file_type=json"
+
+DXY_API = "https://api.stlouisfed.org/fred/series/observations?series_id=DTWEXBGS&api_key=451c78fae7efcff3f7002a107b40bb6e&file_type=json"
 
 def get_fed_balance_sheet():
     try:
@@ -23,19 +24,35 @@ def get_fed_balance_sheet():
         return None
 
 def get_dollar_volatility():
+
     try:
+
         r = requests.get(DXY_API, timeout=10)
         data = r.json()
-        prices = data["chart"]["result"][0]["indicators"]["quote"][0]["close"]
-        prices = [p for p in prices if p is not None]
-        if len(prices) < 10:
+
+        values = []
+
+        for obs in data.get("observations", []):
+
+            v = obs.get("value")
+
+            if v and v != ".":
+                values.append(float(v))
+
+        if len(values) < 10:
             return None
+
         returns = []
-        for i in range(1, len(prices)):
-            r = (prices[i] - prices[i-1]) / prices[i-1]
+
+        for i in range(1, len(values)):
+
+            r = (values[i] - values[i-1]) / values[i-1]
             returns.append(r)
+
         return statistics.pstdev(returns)
+
     except:
+
         return None
 
 def classify_liquidity(balance_series, dollar_vol):
