@@ -23,6 +23,35 @@ def get_liquidity_modifier():
     except:
         return 0.0
 
+def get_liquidity_modifier():
+
+    liquidity_file = BASE_PATH / "data" / "liquidity_state.json"
+
+    if not liquidity_file.exists():
+        return 0
+
+    try:
+
+        with open(liquidity_file) as f:
+            data = json.load(f)
+
+        regime = data.get("liquidity_regime")
+
+        if regime == "Global Liquidity Expansion":
+            return 0.2
+
+        if regime == "Global Liquidity Contraction":
+            return -0.2
+
+        if regime == "Liquidity Stress Environment":
+            return -0.1
+
+        return 0
+
+    except:
+
+        return 0
+
 def compute_transition_pressure(metrics):
     hbv = metrics["heartbeat_variability"]
     arr = metrics["arrhythmia_index"]
