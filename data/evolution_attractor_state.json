@@ -1,7 +1,1 @@
-{
-    "current_pressure": 2.668132,
-    "mean_attractor": 2.055650437837838,
-    "median_attractor": 2.034353,
-    "volatility_band": 0.8301127244916884,
-    "system_state": "Near Structural Attractor"
-}
+{"current_pressure": 1.116054, "current_attractor": 3, "attractor_pressure_level": 0.8960159130434784, "all_attractors": [3.8086835555555556, 2.7512661896551727, 1.9192657040816326, 0.8960159130434784]}

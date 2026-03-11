@@ -4,6 +4,31 @@ import csv
 from pathlib import Path
 
 BASE_PATH = Path(__file__).resolve().parent.parent
+
+MACRO_FILE = BASE_PATH / "data" / "macro_environment_state.json"
+
+def get_macro_modifier():
+
+    try:
+
+        with open(MACRO_FILE) as f:
+            data = json.load(f)
+
+        state = data.get("macro_environment")
+
+        if state == "Macro Expansion":
+            return 0.2
+
+        if state == "Financial Stress":
+            return -0.2
+
+        return 0
+
+    except:
+
+        return 0
+
+BASE_PATH = Path(__file__).resolve().parent.parent
 METRICS_PATH = BASE_PATH / "data" / "organism_metrics"
 OUTPUT_PATH = BASE_PATH / "data" / "evolution_pressure.csv"
 LIQUIDITY_FILE = BASE_PATH / "data" / "liquidity_state.json"
