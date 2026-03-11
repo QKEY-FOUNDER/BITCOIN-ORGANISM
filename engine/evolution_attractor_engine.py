@@ -1,89 +1,100 @@
-import csv
-import statistics
+import pandas as pd
+import numpy as np
+import json
 from pathlib import Path
+from sklearn.cluster import KMeans
 
 BASE_PATH = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_PATH / "data"
 
-PRESSURE_FILE = DATA_PATH / "evolution_pressure.csv"
-ATTRACTOR_FILE = DATA_PATH / "evolution_attractor_state.json"
-
-
-def load_pressure():
-
-    series = []
-
-    with open(PRESSURE_FILE) as f:
-
-        reader = csv.DictReader(f)
-
-        for r in reader:
-            series.append(float(r["pressure"]))
-
-    return series
+PRESSURE_FILE = BASE_PATH / "data" / "evolution_pressure.csv"
+OUTPUT_FILE = BASE_PATH / "data" / "evolution_attractor_state.json"
 
 
-def compute_attractor(series):
+def load_pressure_series():
 
-    mean_pressure = statistics.mean(series)
+    try:
 
-    median_pressure = statistics.median(series)
+        df = pd.read_csv(PRESSURE_FILE)
 
-    std_pressure = statistics.pstdev(series)
+        if "pressure" not in df.columns:
+            return None
 
-    return mean_pressure, median_pressure, std_pressure
+        return df["pressure"].dropna().values.reshape(-1,1)
 
+    except:
 
-def classify_state(current, attractor):
-
-    if current > attractor + 1:
-        return "High Expansion"
-
-    if current < attractor - 1:
-        return "Deep Compression"
-
-    return "Near Structural Attractor"
+        return None
 
 
-def save_state(current, mean, median, std, classification):
+def compute_attractors(series, n_clusters=4):
 
-    import json
+    model = KMeans(n_clusters=n_clusters, random_state=42)
 
-    report = {
-        "current_pressure": current,
-        "mean_attractor": mean,
-        "median_attractor": median,
-        "volatility_band": std,
-        "system_state": classification
-    }
+    model.fit(series)
 
-    with open(ATTRACTOR_FILE, "w") as f:
-        json.dump(report, f, indent=4)
+    centers = model.cluster_centers_
+
+    labels = model.labels_
+
+    return centers.flatten(), labels
+
+
+def detect_current_attractor(series, centers):
+
+    current = series[-1][0]
+
+    distances = [abs(current - c) for c in centers]
+
+    idx = np.argmin(distances)
+
+    return idx, centers[idx]
 
 
 def main():
 
-    print("\nBitcoin Organism - Evolution Attractor Engine")
+    print("")
+    print("Bitcoin Organism — Evolution Attractor Engine")
     print("--------------------------------------------------")
 
-    series = load_pressure()
+    pressure_series = load_pressure_series()
 
-    current = series[-1]
+    if pressure_series is None:
 
-    mean, median, std = compute_attractor(series)
+        print("Pressure series unavailable")
+        return
 
-    classification = classify_state(current, mean)
+    centers, labels = compute_attractors(pressure_series)
 
-    save_state(current, mean, median, std, classification)
+    attractor_id, attractor_value = detect_current_attractor(pressure_series, centers)
 
-    print("Current pressure:", round(current,3))
-    print("Mean attractor:", round(mean,3))
-    print("Median attractor:", round(median,3))
-    print("Volatility band:", round(std,3))
-    print("System state:", classification)
+    print("")
+    print("Detected attractors (pressure levels):")
 
-    print("Attractor report saved:")
-    print(ATTRACTOR_FILE)
+    for i,c in enumerate(centers):
+
+        print("Attractor",i,"→",round(float(c),4))
+
+    print("")
+    print("Current system pressure:",round(float(pressure_series[-1][0]),4))
+    print("Current attractor:",attractor_id)
+    print("Attractor pressure level:",round(float(attractor_value),4))
+
+    output = {
+
+        "current_pressure": float(pressure_series[-1][0]),
+        "current_attractor": int(attractor_id),
+        "attractor_pressure_level": float(attractor_value),
+        "all_attractors": [float(c) for c in centers]
+
+    }
+
+    with open(OUTPUT_FILE,"w") as f:
+
+        json.dump(output,f)
+
+    print("")
+    print("Attractor state saved:")
+    print(OUTPUT_FILE)
 
 
 if __name__ == "__main__":

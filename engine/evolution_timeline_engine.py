@@ -1,96 +1,83 @@
-import csv
-from pathlib import Path
+import json
+import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_PATH / "data"
-PRESSURE_CSV = DATA_PATH / "evolution_pressure.csv"
-OUTPUT_PATH = DATA_PATH / "bitcoin_evolution_timeline.png"
+
+PRESSURE_FILE = DATA_PATH / "evolution_pressure.csv"
+ATTRACTOR_FILE = DATA_PATH / "evolution_attractor_state.json"
+
+OUTPUT_FILE = DATA_PATH / "evolution_timeline_map.png"
 
 
-def load_series():
-
-    months = []
-    pressures = []
-
-    with open(PRESSURE_CSV) as f:
-
-        reader = csv.DictReader(f)
-
-        for row in reader:
-
-            months.append(row["month"])
-            pressures.append(float(row["pressure"]))
-
-    return months, pressures
+def load_attractors():
+    try:
+        with open(ATTRACTOR_FILE) as f:
+            data = json.load(f)
+            return data.get("attractor_levels", [])
+    except:
+        return []
 
 
-def classify_regime(p):
+def detect_transitions(pressure_series, attractors):
+    transitions = []
 
-    if p < 1.5:
-        return "Equilibrium"
+    for i in range(1, len(pressure_series)):
+        p_prev = pressure_series[i-1]
+        p_now = pressure_series[i]
 
-    if p < 2.2:
-        return "Compression"
+        for level in attractors:
 
-    if p < 3.0:
-        return "Expansion"
+            crossed_up = p_prev < level and p_now >= level
+            crossed_down = p_prev > level and p_now <= level
 
-    return "Instability"
+            if crossed_up or crossed_down:
+                transitions.append((i, level))
+
+    return transitions
 
 
 def main():
 
-    print("\nBitcoin Organism — Evolution Timeline")
+    print("")
+    print("Bitcoin Organism — Evolution Timeline Engine")
     print("--------------------------------------------------")
 
-    months, pressures = load_series()
+    df = pd.read_csv(PRESSURE_FILE)
 
-    regimes = [classify_regime(p) for p in pressures]
+    pressure = df["pressure"].values
+    months = df["month"]
 
-    colors = []
+    attractors = load_attractors()
 
-    for r in regimes:
+    transitions = detect_transitions(pressure, attractors)
 
-        if r == "Equilibrium":
-            colors.append("blue")
+    plt.figure(figsize=(14,7))
 
-        elif r == "Compression":
-            colors.append("orange")
+    plt.plot(months, pressure, linewidth=2)
 
-        elif r == "Expansion":
-            colors.append("green")
+    for level in attractors:
+        plt.axhline(level, linestyle="--")
 
-        else:
-            colors.append("red")
+    for t in transitions:
+        idx, level = t
+        plt.scatter(months.iloc[idx], pressure[idx], s=80)
 
-    plt.figure(figsize=(16,6))
-
-    plt.scatter(range(len(pressures)), pressures, c=colors, s=12)
-
-    plt.plot(pressures, linewidth=1)
-
-    plt.axhline(1.5, linestyle="--")
-    plt.axhline(2.2, linestyle="--")
-    plt.axhline(3.0, linestyle="--")
-
-    plt.title("Bitcoin Organism — Evolution Timeline")
-    plt.xlabel("Time")
+    plt.title("Bitcoin Organism Evolution Timeline")
+    plt.xlabel("Timeline")
     plt.ylabel("Evolution Pressure")
+
+    plt.xticks(rotation=45)
 
     plt.tight_layout()
 
-    plt.savefig(OUTPUT_PATH)
+    plt.savefig(OUTPUT_FILE)
 
-    print("Timeline saved:")
-    print(OUTPUT_PATH)
-
-    print("Months analysed:", len(months))
-
-    print("\nOpening timeline...")
-
-    import os
-    os.system(f"open {OUTPUT_PATH}")
+    print("")
+    print("Timeline map saved:")
+    print(OUTPUT_FILE)
 
 
 if __name__ == "__main__":

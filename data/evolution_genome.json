@@ -1,0 +1,15 @@
+{
+  "organism": "BITCOIN-ORGANISM",
+  "genome_version": "1.0",
+  "structural_genes": {
+    "attractor_levels": null,
+    "current_attractor": 3
+  },
+  "adaptive_genes": {
+    "adaptive_weight": 1.1,
+    "model_state": "High Reliability"
+  },
+  "evolution_state": {
+    "stage": "Pre-Expansion Phase"
+  }
+}
