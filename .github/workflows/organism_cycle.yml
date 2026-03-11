@@ -1,0 +1,34 @@
+name: Bitcoin Organism Daily Cycle
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-organism:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run data feeder
+        run: python -m engine.data_feeder_engine
+
+      - name: Run pulse engine
+        run: python -m engine.evolution_pulse_engine
+
+      - name: Commit organism state
+        run: |
+          git config --global user.name "organism-bot"
+          git config --global user.email "organism@bot.ai"
+          git add data/
+          git commit -m "daily organism cycle update" || echo "no changes"
+          git push
