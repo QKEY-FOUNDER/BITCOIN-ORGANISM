@@ -17,13 +17,12 @@ FILES = {
 
 PRESSURE_FILE = DATA_PATH / "evolution_pressure.csv"
 
-HEARTBEAT_FILE = (
+HEARTBEAT_DIR = (
     DATA_PATH
     / "07_Reconfiguracao_Global_2022_Plus"
     / "data"
     / "output"
     / "heartbeat"
-    / "cron.log"
 )
 
 
@@ -35,11 +34,22 @@ def load_json(file):
         return None
 
 
-def get_last_heartbeat():
+def get_latest_heartbeat():
+
     try:
-        with open(HEARTBEAT_FILE) as f:
-            lines = f.readlines()
-            return lines[-1]
+
+        files = list(HEARTBEAT_DIR.glob("*.json"))
+
+        if not files:
+            return None
+
+        latest = sorted(files)[-1]
+
+        with open(latest) as f:
+            data = json.load(f)
+
+        return data
+
     except:
         return None
 
@@ -60,9 +70,7 @@ sync = data["sync"]
 cycle = data["cycle"]
 
 
-# ------------------------------
 # Evolution Radar
-# ------------------------------
 
 st.subheader("Evolution Radar")
 
@@ -81,16 +89,16 @@ if cycle:
     col4.metric("Cycle Phase", cycle.get("cycle_signal"))
 
 
-# ------------------------------
 # Market Regime
-# ------------------------------
 
 st.subheader("Market Regime")
 
 if observatory:
+
     regime = observatory.get("evolution_stage")
 
     if regime:
+
         if "Expansion" in regime:
             st.success(f"Regime: {regime}")
 
@@ -104,13 +112,12 @@ if observatory:
             st.info(f"Regime: {regime}")
 
 
-# ------------------------------
 # Macro Synchronization
-# ------------------------------
 
 st.subheader("Macro Synchronization")
 
 if sync:
+
     sync_state = sync.get("synchronization_state")
 
     if sync_state == "aligned":
@@ -123,13 +130,12 @@ if sync:
         st.warning("Macro misalignment detected")
 
 
-# ------------------------------
 # Evolution Pressure Timeline
-# ------------------------------
 
 st.subheader("Evolution Pressure Timeline")
 
 try:
+
     df = pd.read_csv(PRESSURE_FILE)
 
     if "month" in df.columns:
@@ -138,48 +144,53 @@ try:
         st.line_chart(df["pressure"])
 
 except:
+
     st.write("Pressure data not available")
 
 
-# ------------------------------
 # Evolution Phase Map
-# ------------------------------
 
 st.subheader("Evolution Phase Map")
 
 try:
+
     df = pd.read_csv(PRESSURE_FILE)
 
     if "tension" in df.columns:
+
         st.scatter_chart(
             df,
             x="tension",
             y="pressure"
         )
+
     else:
+
         st.write("Tension data not available")
 
 except:
+
     st.write("Phase map data not available")
 
 
-# ------------------------------
 # Organism Heartbeat
-# ------------------------------
 
 st.subheader("Organism Heartbeat")
 
-heartbeat = get_last_heartbeat()
+heartbeat = get_latest_heartbeat()
 
 if heartbeat:
-    st.code(heartbeat)
+
+    st.success("Heartbeat detected")
+
+    st.json(heartbeat)
+
 else:
+
     st.write("Heartbeat not detected")
 
 
-# ------------------------------
 # Mission Control
-# ------------------------------
 
 st.subheader("Organism Mission Control")
 
@@ -206,9 +217,7 @@ with colC:
         st.success("Evolution recalculated")
 
 
-# ------------------------------
 # System Data
-# ------------------------------
 
 st.subheader("System Data")
 
