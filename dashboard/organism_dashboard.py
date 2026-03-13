@@ -16,7 +16,14 @@ FILES = {
 }
 
 PRESSURE_FILE = DATA_PATH / "evolution_pressure.csv"
-HEARTBEAT_FILE = DATA_PATH / "output" / "heartbeat" / "heartbeat.log"
+
+HEARTBEAT_FILE = (
+    DATA_PATH
+    / "07_Reconfiguracao_Global_2022_Plus"
+    / "data"
+    / "output"
+    / "heartbeat.log"
+)
 
 
 def load_json(file):
@@ -36,7 +43,10 @@ def get_last_heartbeat():
         return None
 
 
-st.set_page_config(page_title="Bitcoin Organism Observatory", layout="wide")
+st.set_page_config(
+    page_title="Bitcoin Organism Observatory",
+    layout="wide"
+)
 
 st.title("🧬 BITCOIN ORGANISM OBSERVATORY")
 
@@ -89,8 +99,10 @@ if sync:
 
     if sync_state == "aligned":
         st.success("Global synchronization detected")
+
     elif sync_state == "neutral":
         st.info("Global systems neutral")
+
     else:
         st.warning("Macro misalignment detected")
 
@@ -99,9 +111,32 @@ st.subheader("Evolution Pressure Timeline")
 
 try:
     df = pd.read_csv(PRESSURE_FILE)
-    st.line_chart(df.set_index("month")["pressure"])
+
+    if "month" in df.columns:
+        st.line_chart(df.set_index("month")["pressure"])
+    else:
+        st.line_chart(df["pressure"])
+
 except:
     st.write("Pressure data not available")
+
+
+st.subheader("Evolution Phase Map")
+
+try:
+    df = pd.read_csv(PRESSURE_FILE)
+
+    if "structural_tension" in df.columns:
+        st.scatter_chart(
+            df,
+            x="structural_tension",
+            y="pressure"
+        )
+    else:
+        st.write("Structural tension data not available")
+
+except:
+    st.write("Phase map data not available")
 
 
 st.subheader("Organism Heartbeat")
@@ -119,16 +154,21 @@ st.subheader("Organism Mission Control")
 colA, colB, colC = st.columns(3)
 
 with colA:
+
     if st.button("Run Full Organism"):
         os.system("./run_bitcoin_organism.sh")
         st.success("Organism cycle executed")
 
+
 with colB:
+
     if st.button("Run Physiology Engine"):
         os.system("python -m engine.physiology_generator_engine")
         st.success("Physiology updated")
 
+
 with colC:
+
     if st.button("Run Evolution Engine"):
         os.system("python -m engine.evolution_pressure_engine")
         st.success("Evolution recalculated")
