@@ -22,7 +22,8 @@ HEARTBEAT_FILE = (
     / "07_Reconfiguracao_Global_2022_Plus"
     / "data"
     / "output"
-    / "heartbeat.log"
+    / "heartbeat"
+    / "cron.log"
 )
 
 
@@ -59,6 +60,10 @@ sync = data["sync"]
 cycle = data["cycle"]
 
 
+# ------------------------------
+# Evolution Radar
+# ------------------------------
+
 st.subheader("Evolution Radar")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -76,6 +81,10 @@ if cycle:
     col4.metric("Cycle Phase", cycle.get("cycle_signal"))
 
 
+# ------------------------------
+# Market Regime
+# ------------------------------
+
 st.subheader("Market Regime")
 
 if observatory:
@@ -84,13 +93,20 @@ if observatory:
     if regime:
         if "Expansion" in regime:
             st.success(f"Regime: {regime}")
+
         elif "Compression" in regime:
             st.warning(f"Regime: {regime}")
+
         elif "Instability" in regime:
             st.error(f"Regime: {regime}")
+
         else:
             st.info(f"Regime: {regime}")
 
+
+# ------------------------------
+# Macro Synchronization
+# ------------------------------
 
 st.subheader("Macro Synchronization")
 
@@ -107,6 +123,10 @@ if sync:
         st.warning("Macro misalignment detected")
 
 
+# ------------------------------
+# Evolution Pressure Timeline
+# ------------------------------
+
 st.subheader("Evolution Pressure Timeline")
 
 try:
@@ -121,23 +141,31 @@ except:
     st.write("Pressure data not available")
 
 
+# ------------------------------
+# Evolution Phase Map
+# ------------------------------
+
 st.subheader("Evolution Phase Map")
 
 try:
     df = pd.read_csv(PRESSURE_FILE)
 
-    if "structural_tension" in df.columns:
+    if "tension" in df.columns:
         st.scatter_chart(
             df,
-            x="structural_tension",
+            x="tension",
             y="pressure"
         )
     else:
-        st.write("Structural tension data not available")
+        st.write("Tension data not available")
 
 except:
     st.write("Phase map data not available")
 
+
+# ------------------------------
+# Organism Heartbeat
+# ------------------------------
 
 st.subheader("Organism Heartbeat")
 
@@ -148,6 +176,10 @@ if heartbeat:
 else:
     st.write("Heartbeat not detected")
 
+
+# ------------------------------
+# Mission Control
+# ------------------------------
 
 st.subheader("Organism Mission Control")
 
@@ -173,6 +205,10 @@ with colC:
         os.system("python -m engine.evolution_pressure_engine")
         st.success("Evolution recalculated")
 
+
+# ------------------------------
+# System Data
+# ------------------------------
 
 st.subheader("System Data")
 
