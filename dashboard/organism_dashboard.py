@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import streamlit as st
+import os
 from pathlib import Path
 
 BASE_PATH = Path(__file__).resolve().parent.parent
@@ -15,12 +16,22 @@ FILES = {
 }
 
 PRESSURE_FILE = DATA_PATH / "evolution_pressure.csv"
+HEARTBEAT_FILE = DATA_PATH / "output" / "heartbeat" / "heartbeat.log"
 
 
 def load_json(file):
     try:
         with open(DATA_PATH / file) as f:
             return json.load(f)
+    except:
+        return None
+
+
+def get_last_heartbeat():
+    try:
+        with open(HEARTBEAT_FILE) as f:
+            lines = f.readlines()
+            return lines[-1]
     except:
         return None
 
@@ -37,6 +48,9 @@ brain = data["brain"]
 sync = data["sync"]
 cycle = data["cycle"]
 
+
+st.subheader("Evolution Radar")
+
 col1, col2, col3, col4 = st.columns(4)
 
 if observatory:
@@ -49,20 +63,76 @@ if brain:
     col3.metric("Model State", brain.get("model_state"))
 
 if cycle:
-    col4.metric("Cycle Signal", cycle.get("cycle_signal"))
+    col4.metric("Cycle Phase", cycle.get("cycle_signal"))
+
+
+st.subheader("Market Regime")
+
+if observatory:
+    regime = observatory.get("evolution_stage")
+
+    if regime:
+        if "Expansion" in regime:
+            st.success(f"Regime: {regime}")
+        elif "Compression" in regime:
+            st.warning(f"Regime: {regime}")
+        elif "Instability" in regime:
+            st.error(f"Regime: {regime}")
+        else:
+            st.info(f"Regime: {regime}")
+
 
 st.subheader("Macro Synchronization")
 
 if sync:
-    st.write(sync.get("synchronization_state"))
+    sync_state = sync.get("synchronization_state")
+
+    if sync_state == "aligned":
+        st.success("Global synchronization detected")
+    elif sync_state == "neutral":
+        st.info("Global systems neutral")
+    else:
+        st.warning("Macro misalignment detected")
+
 
 st.subheader("Evolution Pressure Timeline")
 
 try:
     df = pd.read_csv(PRESSURE_FILE)
-    st.line_chart(df["pressure"])
+    st.line_chart(df.set_index("month")["pressure"])
 except:
     st.write("Pressure data not available")
+
+
+st.subheader("Organism Heartbeat")
+
+heartbeat = get_last_heartbeat()
+
+if heartbeat:
+    st.code(heartbeat)
+else:
+    st.write("Heartbeat not detected")
+
+
+st.subheader("Organism Mission Control")
+
+colA, colB, colC = st.columns(3)
+
+with colA:
+    if st.button("Run Full Organism"):
+        os.system("./run_bitcoin_organism.sh")
+        st.success("Organism cycle executed")
+
+with colB:
+    if st.button("Run Physiology Engine"):
+        os.system("python -m engine.physiology_generator_engine")
+        st.success("Physiology updated")
+
+with colC:
+    if st.button("Run Evolution Engine"):
+        os.system("python -m engine.evolution_pressure_engine")
+        st.success("Evolution recalculated")
+
 
 st.subheader("System Data")
 
