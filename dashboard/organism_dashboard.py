@@ -7,9 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
-from modules.loader import load_system_state, load_pressure
-from modules.radar import render_radar
-from modules.timeline import render_timeline
+from dashboard.modules.loader import load_system_state, load_pressure
+from dashboard.modules.radar import render_radar
+from dashboard.modules.timeline import render_timeline
 
 
 st.set_page_config(
