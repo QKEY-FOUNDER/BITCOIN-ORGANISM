@@ -216,16 +216,16 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    df["date"] = df["month"].str.replace("bitcoin_", "")
-    df["date"] = pd.to_datetime(df["date"], format="%Y_%m")
+    # converter mês para data
+    df["date"] = df["month"].str.replace("bitcoin_", "", regex=False)
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
+    df = df.dropna(subset=["date"])
     df = df.sort_values("date")
 
     fig, ax = plt.subplots(figsize=(12,3))
 
-    pressure = df["pressure"]
-
-    ax.plot(df["date"], pressure, linewidth=2)
+    ax.plot(df["date"], df["pressure"], linewidth=2)
 
     # bandas de regime
     ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)   # compressão
@@ -255,10 +255,10 @@ try:
         round(last_two.iloc[1]["pressure"],3)
     )
 
-except:
+except Exception as e:
 
-    st.write("Pressure data not available")
-
+    st.error("Pressure timeline error")
+    st.write(e)
 
 # ================================
 # DYNAMIC EVOLUTION FIELD
