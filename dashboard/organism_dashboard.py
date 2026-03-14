@@ -50,11 +50,10 @@ def get_latest_heartbeat():
             data = json.load(f)
 
         # sincronizar data com último mês do mercado
-
         df = pd.read_csv(PRESSURE_FILE)
         df = df.sort_values("month")
 
-        last_month = df.iloc[-1]["month"]  # exemplo: bitcoin_2026_03
+        last_month = df.iloc[-1]["month"]
         month_str = last_month.replace("bitcoin_", "")
 
         year = month_str.split("_")[0]
@@ -87,7 +86,9 @@ sync = data["sync"]
 cycle = data["cycle"]
 
 
+# ================================
 # EVOLUTION RADAR
+# ================================
 
 st.subheader("Evolution Radar")
 
@@ -106,46 +107,53 @@ if cycle:
     col4.metric("Cycle Phase", cycle.get("cycle_signal"))
 
 
-# MARKET REGIME
+# ================================
+# REGIME + MACRO (compact layout)
+# ================================
 
-st.subheader("Market Regime")
+cols = st.columns(2)
 
-if observatory:
+with cols[0]:
 
-    regime = observatory.get("evolution_stage")
+    st.subheader("Market Regime")
 
-    if regime and "Expansion" in regime:
-        st.success(f"Regime: {regime}")
+    if observatory:
 
-    elif regime and "Compression" in regime:
-        st.warning(f"Regime: {regime}")
+        regime = observatory.get("evolution_stage")
 
-    elif regime and "Instability" in regime:
-        st.error(f"Regime: {regime}")
+        if regime and "Expansion" in regime:
+            st.success(f"Regime: {regime}")
 
-    else:
-        st.info(f"Regime: {regime}")
+        elif regime and "Compression" in regime:
+            st.warning(f"Regime: {regime}")
+
+        elif regime and "Instability" in regime:
+            st.error(f"Regime: {regime}")
+
+        else:
+            st.info(f"Regime: {regime}")
+
+with cols[1]:
+
+    st.subheader("Macro Synchronization")
+
+    if sync:
+
+        sync_state = sync.get("synchronization_state")
+
+        if sync_state == "aligned":
+            st.success("Global synchronization detected")
+
+        elif sync_state == "neutral":
+            st.info("Global systems neutral")
+
+        else:
+            st.warning("Macro misalignment detected")
 
 
-# MACRO SYNCHRONIZATION
-
-st.subheader("Macro Synchronization")
-
-if sync:
-
-    sync_state = sync.get("synchronization_state")
-
-    if sync_state == "aligned":
-        st.success("Global synchronization detected")
-
-    elif sync_state == "neutral":
-        st.info("Global systems neutral")
-
-    else:
-        st.warning("Macro misalignment detected")
-
-
+# ================================
 # EVOLUTION PRESSURE TIMELINE
+# ================================
 
 st.subheader("Evolution Pressure Timeline")
 
@@ -178,7 +186,9 @@ except:
     st.write("Pressure data not available")
 
 
+# ================================
 # EVOLUTION PHASE MAP
+# ================================
 
 st.subheader("Evolution Phase Map")
 
@@ -186,7 +196,7 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    fig, ax = plt.subplots(figsize=(9,4))
+    fig, ax = plt.subplots(figsize=(9,3.8))
 
     ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
     ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
@@ -214,7 +224,7 @@ try:
     ax.scatter(
         current["tension"],
         current["pressure"],
-        s=220
+        s=200
     )
 
     dx = current["tension"] - prev["tension"]
@@ -244,7 +254,9 @@ except:
     st.write("Phase map data not available")
 
 
+# ================================
 # ORGANISM HEARTBEAT
+# ================================
 
 st.subheader("Organism Heartbeat")
 
@@ -260,7 +272,9 @@ else:
     st.write("Heartbeat not detected")
 
 
+# ================================
 # MISSION CONTROL
+# ================================
 
 st.subheader("Organism Mission Control")
 
@@ -285,7 +299,9 @@ with colC:
         st.success("Evolution recalculated")
 
 
+# ================================
 # SYSTEM DATA
+# ================================
 
 st.subheader("System Data")
 
