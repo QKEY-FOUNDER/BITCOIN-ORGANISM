@@ -4,7 +4,6 @@ import streamlit as st
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_PATH / "data"
@@ -50,14 +49,24 @@ def get_latest_heartbeat():
         with open(latest) as f:
             data = json.load(f)
 
-        today = datetime.utcnow().date()
-        yesterday = today - timedelta(days=1)
+        # sincronizar data com último mês do mercado
+
+        df = pd.read_csv(PRESSURE_FILE)
+        df = df.sort_values("month")
+
+        last_month = df.iloc[-1]["month"]  # exemplo: bitcoin_2026_03
+        month_str = last_month.replace("bitcoin_", "")
+
+        year = month_str.split("_")[0]
+        month = month_str.split("_")[1]
+
+        market_date = f"{year}-{month}-01"
 
         if "canonical_state" in data:
-            data["canonical_state"]["date"] = str(yesterday)
+            data["canonical_state"]["date"] = market_date
 
         if "date" in data:
-            data["date"] = str(yesterday)
+            data["date"] = market_date
 
         return data
 
@@ -78,6 +87,8 @@ sync = data["sync"]
 cycle = data["cycle"]
 
 
+# EVOLUTION RADAR
+
 st.subheader("Evolution Radar")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -94,6 +105,8 @@ if brain:
 if cycle:
     col4.metric("Cycle Phase", cycle.get("cycle_signal"))
 
+
+# MARKET REGIME
 
 st.subheader("Market Regime")
 
@@ -114,6 +127,8 @@ if observatory:
         st.info(f"Regime: {regime}")
 
 
+# MACRO SYNCHRONIZATION
+
 st.subheader("Macro Synchronization")
 
 if sync:
@@ -130,12 +145,13 @@ if sync:
         st.warning("Macro misalignment detected")
 
 
+# EVOLUTION PRESSURE TIMELINE
+
 st.subheader("Evolution Pressure Timeline")
 
 try:
 
     df = pd.read_csv(PRESSURE_FILE)
-
     df = df.sort_values("month")
 
     window = 96
@@ -162,18 +178,20 @@ except:
     st.write("Pressure data not available")
 
 
+# EVOLUTION PHASE MAP
+
 st.subheader("Evolution Phase Map")
 
 try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    fig, ax = plt.subplots(figsize=(9, 4))
+    fig, ax = plt.subplots(figsize=(9,4))
 
-    ax.axhspan(0, 1.2, color="#c7d2fe", alpha=0.35)
-    ax.axhspan(1.2, 2.5, color="#bbf7d0", alpha=0.35)
-    ax.axhspan(2.5, 3.8, color="#fde68a", alpha=0.35)
-    ax.axhspan(3.8, 10, color="#fecaca", alpha=0.35)
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
     ax.scatter(
         df["tension"],
@@ -226,6 +244,8 @@ except:
     st.write("Phase map data not available")
 
 
+# ORGANISM HEARTBEAT
+
 st.subheader("Organism Heartbeat")
 
 heartbeat = get_latest_heartbeat()
@@ -233,13 +253,14 @@ heartbeat = get_latest_heartbeat()
 if heartbeat:
 
     st.success("Heartbeat detected")
-
     st.json(heartbeat)
 
 else:
 
     st.write("Heartbeat not detected")
 
+
+# MISSION CONTROL
 
 st.subheader("Organism Mission Control")
 
@@ -263,6 +284,8 @@ with colC:
         os.system("python -m engine.evolution_pressure_engine")
         st.success("Evolution recalculated")
 
+
+# SYSTEM DATA
 
 st.subheader("System Data")
 
