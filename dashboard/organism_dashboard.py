@@ -217,20 +217,39 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    df["date"] = df["month"].str.replace("bitcoin_", "", regex=False)
-    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    # converter "bitcoin_YYYY_MM" para datetime real
+    df["date"] = (
+        df["month"]
+        .str.replace("bitcoin_", "", regex=False)
+        .str.replace("_", "-")
+    )
+
+    df["date"] = pd.to_datetime(df["date"], format="%Y-%m", errors="coerce")
 
     df = df.dropna(subset=["date"])
     df = df.sort_values("date")
 
-    fig, ax = plt.subplots(figsize=(12,3))
+    fig, ax = plt.subplots(figsize=(12,4))
 
-    ax.plot(df["date"], df["pressure"], linewidth=2)
+    # linha da pressão
+    ax.plot(
+        df["date"],
+        df["pressure"],
+        linewidth=2,
+        color="black"
+    )
 
-    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)
-    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3)
-    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3)
-    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)
+    # bandas de regime
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)   # compressão
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3) # expansão
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3) # transição
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)  # instabilidade
+
+    # eixo temporal apenas com anos
+    import matplotlib.dates as mdates
+
+    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 
     ax.set_xlabel("Year")
     ax.set_ylabel("Pressure")
@@ -260,7 +279,6 @@ except Exception as e:
 
     st.error("Pressure timeline error")
     st.write(e)
-
 
 # ================================
 # DYNAMIC EVOLUTION FIELD
