@@ -1,5 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import gaussian_kde
 
 
 def render_phase_map(df):
@@ -10,8 +12,8 @@ def render_phase_map(df):
         st.write("Phase space data unavailable")
         return
 
-    tension = df["tension"]
-    pressure = df["pressure"]
+    tension = df["tension"].values
+    pressure = df["pressure"].values
 
     fig, ax = plt.subplots(figsize=(10,2))
 
@@ -25,15 +27,26 @@ def render_phase_map(df):
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
     # ================================
-    # ATTRACTOR DENSITY (HEXBIN)
+    # KDE DENSITY FIELD
     # ================================
 
-    ax.hexbin(
-        tension,
-        pressure,
-        gridsize=30,
-        mincnt=1,
-        alpha=0.25
+    xy = np.vstack([tension, pressure])
+    kde = gaussian_kde(xy)
+
+    xmin, xmax = 0, tension.max() + 0.05
+    ymin = max(0, pressure.min() - 0.25)
+    ymax = pressure.max() + 0.35
+
+    xx, yy = np.mgrid[xmin:xmax:200j, ymin:ymax:200j]
+    grid = np.vstack([xx.ravel(), yy.ravel()])
+    density = kde(grid).reshape(xx.shape)
+
+    ax.contourf(
+        xx,
+        yy,
+        density,
+        levels=10,
+        alpha=0.18
     )
 
     # ================================
@@ -43,8 +56,8 @@ def render_phase_map(df):
     ax.scatter(
         tension,
         pressure,
-        s=6,
-        alpha=0.15
+        s=7,
+        alpha=0.25
     )
 
     # ================================
@@ -86,18 +99,11 @@ def render_phase_map(df):
         linewidth=2
     )
 
-    # ================================
-    # AXIS
-    # ================================
-
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
 
-    ymin = max(0, pressure.min() - 0.25)
-    ymax = pressure.max() + 0.35
-
+    ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
-    ax.set_xlim(0, tension.max() + 0.05)
 
     plt.tight_layout(pad=0.1)
 
