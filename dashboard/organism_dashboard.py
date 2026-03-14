@@ -36,7 +36,6 @@ def load_json(file):
 
 
 def get_latest_heartbeat():
-
     try:
 
         files = list(HEARTBEAT_DIR.glob("*.json"))
@@ -68,7 +67,7 @@ sync = data["sync"]
 cycle = data["cycle"]
 
 
-# Evolution Radar
+# EVOLUTION RADAR
 
 st.subheader("Evolution Radar")
 
@@ -87,7 +86,7 @@ if cycle:
     col4.metric("Cycle Phase", cycle.get("cycle_signal"))
 
 
-# Market Regime
+# MARKET REGIME
 
 st.subheader("Market Regime")
 
@@ -108,7 +107,7 @@ if observatory:
         st.info(f"Regime: {regime}")
 
 
-# Macro Synchronization
+# MACRO SYNCHRONIZATION
 
 st.subheader("Macro Synchronization")
 
@@ -126,7 +125,7 @@ if sync:
         st.warning("Macro misalignment detected")
 
 
-# Evolution Pressure Timeline
+# EVOLUTION PRESSURE TIMELINE
 
 st.subheader("Evolution Pressure Timeline")
 
@@ -137,23 +136,28 @@ try:
     window = 96
     df_recent = df.tail(window)
 
-    st.line_chart(df_recent["pressure"])
+    chart_df = df_recent.set_index("month")
+
+    st.line_chart(chart_df["pressure"])
 
     last_two = df.tail(2)
+
+    prev_month = last_two.iloc[0]["month"]
+    curr_month = last_two.iloc[1]["month"]
 
     st.markdown("Latest Evolution Pressure")
 
     colA, colB = st.columns(2)
 
-    colA.metric("Previous Month", round(last_two.iloc[0]["pressure"], 3))
-    colB.metric("Current Month", round(last_two.iloc[1]["pressure"], 3))
+    colA.metric(prev_month, round(last_two.iloc[0]["pressure"],3))
+    colB.metric(curr_month, round(last_two.iloc[1]["pressure"],3))
 
 except:
 
     st.write("Pressure data not available")
 
 
-# Evolution Phase Map (Phase Space)
+# PHASE SPACE MAP
 
 st.subheader("Evolution Phase Map")
 
@@ -165,21 +169,18 @@ try:
 
         fig, ax = plt.subplots(figsize=(10,6))
 
-        # zonas de regime
-        ax.axhspan(0,1.2,alpha=0.1,color="blue")
-        ax.axhspan(1.2,2.5,alpha=0.1,color="green")
-        ax.axhspan(2.5,3.8,alpha=0.1,color="yellow")
-        ax.axhspan(3.8,10,alpha=0.1,color="red")
+        ax.axhspan(0,1.2,alpha=0.15)
+        ax.axhspan(1.2,2.5,alpha=0.15)
+        ax.axhspan(2.5,3.8,alpha=0.15)
+        ax.axhspan(3.8,10,alpha=0.15)
 
-        # histórico
         ax.scatter(
             df["tension"],
             df["pressure"],
             s=25,
-            alpha=0.5
+            alpha=0.4
         )
 
-        # trajetória recente
         recent=df.tail(6)
 
         ax.plot(
@@ -188,13 +189,26 @@ try:
             linewidth=2
         )
 
-        # posição atual
         current=df.iloc[-1]
 
         ax.scatter(
             current["tension"],
             current["pressure"],
-            s=180
+            s=200
+        )
+
+        prev=df.iloc[-2]
+
+        dx=current["tension"]-prev["tension"]
+        dy=current["pressure"]-prev["pressure"]
+
+        ax.arrow(
+            prev["tension"],
+            prev["pressure"],
+            dx,
+            dy,
+            head_width=0.02,
+            length_includes_head=True
         )
 
         ax.set_xlabel("Tension")
@@ -213,7 +227,7 @@ except:
     st.write("Phase map data not available")
 
 
-# Organism Heartbeat
+# HEARTBEAT
 
 st.subheader("Organism Heartbeat")
 
@@ -222,6 +236,7 @@ heartbeat = get_latest_heartbeat()
 if heartbeat:
 
     st.success("Heartbeat detected")
+
     st.json(heartbeat)
 
 else:
@@ -229,7 +244,7 @@ else:
     st.write("Heartbeat not detected")
 
 
-# Mission Control
+# MISSION CONTROL
 
 st.subheader("Organism Mission Control")
 
@@ -254,7 +269,7 @@ with colC:
         st.success("Evolution recalculated")
 
 
-# System Data
+# SYSTEM DATA
 
 st.subheader("System Data")
 
