@@ -18,18 +18,33 @@ def render_phase_map(df):
     ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
-    # histórico
-    ax.scatter(df["tension"], df["pressure"], s=7, alpha=0.20)
+    # histórico completo
+    ax.scatter(
+        df["tension"],
+        df["pressure"],
+        s=7,
+        alpha=0.20
+    )
 
     # trajetória recente
-    recent = df.tail(6)
-    ax.plot(recent["tension"], recent["pressure"], linewidth=2)
+    recent = df.tail(12)
+
+    ax.plot(
+        recent["tension"],
+        recent["pressure"],
+        linewidth=2
+    )
 
     current = df.iloc[-1]
     prev = df.iloc[-2]
 
     # posição atual
-    ax.scatter(current["tension"], current["pressure"], s=110, zorder=3)
+    ax.scatter(
+        current["tension"],
+        current["pressure"],
+        s=110,
+        zorder=3
+    )
 
     dx = current["tension"] - prev["tension"]
     dy = current["pressure"] - prev["pressure"]
@@ -48,12 +63,15 @@ def render_phase_map(df):
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
 
-    # limites compactos
+    # limites compactos do eixo Y
     ymin = max(0, df["pressure"].min() - 0.25)
     ymax = df["pressure"].max() + 0.35
     ax.set_ylim(ymin, ymax)
 
-    # remover espaço morto
+    # limite do eixo X sem espaço morto
+    ax.set_xlim(0, df["tension"].max() + 0.05)
+
+    # layout compacto
     plt.tight_layout(pad=0.1)
 
     st.pyplot(fig)
