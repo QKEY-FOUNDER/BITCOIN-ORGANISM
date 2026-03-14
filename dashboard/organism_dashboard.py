@@ -4,6 +4,7 @@ import streamlit as st
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_PATH / "data"
@@ -26,6 +27,7 @@ HEARTBEAT_DIR = (
     / "heartbeat"
 )
 
+
 def load_json(file):
     try:
         with open(DATA_PATH / file) as f:
@@ -33,7 +35,8 @@ def load_json(file):
     except:
         return None
 
-            def get_latest_heartbeat():
+
+def get_latest_heartbeat():
 
     try:
 
@@ -46,9 +49,6 @@ def load_json(file):
 
         with open(latest) as f:
             data = json.load(f)
-
-        # --- CORREÇÃO DA DATA DO HEARTBEAT ---
-        from datetime import datetime, timedelta
 
         today = datetime.utcnow().date()
         yesterday = today - timedelta(days=1)
@@ -78,8 +78,6 @@ sync = data["sync"]
 cycle = data["cycle"]
 
 
-# EVOLUTION RADAR
-
 st.subheader("Evolution Radar")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -96,8 +94,6 @@ if brain:
 if cycle:
     col4.metric("Cycle Phase", cycle.get("cycle_signal"))
 
-
-# MARKET REGIME
 
 st.subheader("Market Regime")
 
@@ -118,8 +114,6 @@ if observatory:
         st.info(f"Regime: {regime}")
 
 
-# MACRO SYNCHRONIZATION
-
 st.subheader("Macro Synchronization")
 
 if sync:
@@ -135,8 +129,6 @@ if sync:
     else:
         st.warning("Macro misalignment detected")
 
-
-# EVOLUTION PRESSURE TIMELINE
 
 st.subheader("Evolution Pressure Timeline")
 
@@ -157,12 +149,12 @@ try:
 
     colA.metric(
         last_two.iloc[0]["month"],
-        round(last_two.iloc[0]["pressure"],3)
+        round(last_two.iloc[0]["pressure"], 3)
     )
 
     colB.metric(
         last_two.iloc[1]["month"],
-        round(last_two.iloc[1]["pressure"],3)
+        round(last_two.iloc[1]["pressure"], 3)
     )
 
 except:
@@ -170,22 +162,18 @@ except:
     st.write("Pressure data not available")
 
 
-# EVOLUTION PHASE MAP
-
 st.subheader("Evolution Phase Map")
 
 try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    fig, ax = plt.subplots(figsize=(9,4))
+    fig, ax = plt.subplots(figsize=(9, 4))
 
-    # REGIME ZONES
-
-    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
-    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
-    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
-    ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
+    ax.axhspan(0, 1.2, color="#c7d2fe", alpha=0.35)
+    ax.axhspan(1.2, 2.5, color="#bbf7d0", alpha=0.35)
+    ax.axhspan(2.5, 3.8, color="#fde68a", alpha=0.35)
+    ax.axhspan(3.8, 10, color="#fecaca", alpha=0.35)
 
     ax.scatter(
         df["tension"],
@@ -225,7 +213,6 @@ try:
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
-
     ax.set_title("Market Evolution Phase Space")
 
     st.pyplot(fig)
@@ -238,8 +225,6 @@ except:
 
     st.write("Phase map data not available")
 
-
-# ORGANISM HEARTBEAT
 
 st.subheader("Organism Heartbeat")
 
@@ -255,8 +240,6 @@ else:
 
     st.write("Heartbeat not detected")
 
-
-# MISSION CONTROL
 
 st.subheader("Organism Mission Control")
 
@@ -280,8 +263,6 @@ with colC:
         os.system("python -m engine.evolution_pressure_engine")
         st.success("Evolution recalculated")
 
-
-# SYSTEM DATA
 
 st.subheader("System Data")
 
