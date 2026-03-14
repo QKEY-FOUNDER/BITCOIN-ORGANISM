@@ -138,10 +138,25 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    if "month" in df.columns:
-        st.line_chart(df.set_index("month")["pressure"])
-    else:
-        st.line_chart(df["pressure"])
+    df_recent = df.tail(120)
+
+    st.line_chart(df_recent["pressure"])
+
+    last_two = df.tail(2)
+
+    st.markdown("**Latest Evolution Pressure**")
+
+    colA, colB = st.columns(2)
+
+    colA.metric(
+        "Previous Month",
+        round(last_two.iloc[0]["pressure"], 3)
+    )
+
+    colB.metric(
+        "Current Month",
+        round(last_two.iloc[1]["pressure"], 3)
+    )
 
 except:
 
@@ -162,6 +177,12 @@ try:
             df,
             x="tension",
             y="pressure"
+        )
+
+        current = df.iloc[-1]
+
+        st.success(
+            f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
         )
 
     else:
