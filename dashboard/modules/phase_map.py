@@ -1,6 +1,5 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def render_phase_map(df):
@@ -11,8 +10,8 @@ def render_phase_map(df):
         st.write("Phase space data unavailable")
         return
 
-    tension = df["tension"].values
-    pressure = df["pressure"].values
+    tension = df["tension"]
+    pressure = df["pressure"]
 
     fig, ax = plt.subplots(figsize=(10,2))
 
@@ -26,27 +25,14 @@ def render_phase_map(df):
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
     # ================================
-    # ATTRACTOR DENSITY MAP
+    # ATTRACTOR DENSITY (HEXBIN)
     # ================================
 
-    heatmap, xedges, yedges = np.histogram2d(
+    ax.hexbin(
         tension,
         pressure,
-        bins=30
-    )
-
-    extent = [
-        xedges[0],
-        xedges[-1],
-        yedges[0],
-        yedges[-1]
-    ]
-
-    ax.imshow(
-        heatmap.T,
-        extent=extent,
-        origin="lower",
-        aspect="auto",
+        gridsize=30,
+        mincnt=1,
         alpha=0.25
     )
 
@@ -58,7 +44,7 @@ def render_phase_map(df):
         tension,
         pressure,
         s=6,
-        alpha=0.18
+        alpha=0.15
     )
 
     # ================================
