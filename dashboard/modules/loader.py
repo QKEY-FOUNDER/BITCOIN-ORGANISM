@@ -42,13 +42,20 @@ def load_pressure():
 
         df = pd.read_csv(PRESSURE_FILE)
 
-        df["date"] = df["month"].str.replace("bitcoin_", "")
-        df["date"] = pd.to_datetime(df["date"], format="%Y_%m")
+        df["date"] = (
+            df["month"]
+            .str.replace("bitcoin_", "", regex=False)
+        )
+
+        df["date"] = pd.to_datetime(df["date"], format="%Y_%m", errors="coerce")
+
+        df = df.dropna(subset=["date"])
 
         df = df.sort_values("date")
 
         return df
 
-    except:
+    except Exception as e:
 
+        print("PRESSURE LOAD ERROR:", e)
         return None
