@@ -26,7 +26,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
 st.title("🧬 BITCOIN ORGANISM OBSERVATORY")
 
 
@@ -54,9 +53,15 @@ render_timeline(pressure_df)
 
 
 # ================================
+# EVOLUTION PHASE SPACE
+# ================================
+
+render_phase_map(pressure_df)
+
+
+# ================================
 # FOOTER
 # ================================
 
 st.markdown("---")
 st.caption("Bitcoin Organism Observatory — Evolution Monitoring System")
-render_phase_map(df_pressure)
