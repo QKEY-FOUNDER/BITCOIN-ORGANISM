@@ -10,6 +10,7 @@ if str(ROOT_DIR) not in sys.path:
 from dashboard.modules.loader import load_system_state, load_pressure
 from dashboard.modules.radar import render_radar
 from dashboard.modules.timeline import render_timeline
+from dashboard.modules.phase_map import render_phase_map
 
 st.set_page_config(
     page_title="Bitcoin Organism Observatory",
@@ -58,3 +59,4 @@ render_timeline(pressure_df)
 
 st.markdown("---")
 st.caption("Bitcoin Organism Observatory — Evolution Monitoring System")
+render_phase_map(df_pressure)
