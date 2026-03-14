@@ -2,15 +2,14 @@ import streamlit as st
 import sys
 from pathlib import Path
 
-# Garantir que a pasta dashboard está no path
-BASE_DIR = Path(__file__).resolve().parent
-if str(BASE_DIR) not in sys.path:
-    sys.path.append(str(BASE_DIR))
+# garantir que a raiz do repo está no path
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
 
 from dashboard.modules.loader import load_system_state, load_pressure
 from dashboard.modules.radar import render_radar
 from dashboard.modules.timeline import render_timeline
-
 
 st.set_page_config(
     page_title="Bitcoin Organism Observatory",
