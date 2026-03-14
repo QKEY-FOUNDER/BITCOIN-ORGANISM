@@ -49,7 +49,6 @@ def get_latest_heartbeat():
         with open(latest) as f:
             data = json.load(f)
 
-        # sincronizar data com último mês do mercado
         df = pd.read_csv(PRESSURE_FILE)
         df = df.sort_values("month")
 
@@ -75,6 +74,16 @@ def get_latest_heartbeat():
 
 st.set_page_config(page_title="Bitcoin Organism Observatory", layout="wide")
 
+# remover espaço vazio no topo
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 0.8rem;
+    padding-bottom: 0rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("🧬 BITCOIN ORGANISM OBSERVATORY")
 
 data = {k: load_json(v) for k, v in FILES.items()}
@@ -87,28 +96,43 @@ cycle = data["cycle"]
 
 
 # ================================
-# EVOLUTION RADAR
+# EVOLUTION RADAR (compact)
 # ================================
 
 st.subheader("Evolution Radar")
 
 col1, col2, col3, col4 = st.columns(4)
 
-if observatory:
-    col1.metric("Evolution Stage", observatory.get("evolution_stage"))
 
-if pulse:
-    col2.metric("Pulse State", pulse.get("pulse_state"))
+def radar_box(title, value):
 
-if brain:
-    col3.metric("Model State", brain.get("model_state"))
+    st.markdown(f"""
+    <div style="background:#f7f7f7;padding:10px;border-radius:8px">
+        <div style="font-size:12px;color:#666">{title}</div>
+        <div style="font-size:18px;font-weight:600">{value}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-if cycle:
-    col4.metric("Cycle Phase", cycle.get("cycle_signal"))
+
+with col1:
+    if observatory:
+        radar_box("Evolution Stage", observatory.get("evolution_stage"))
+
+with col2:
+    if pulse:
+        radar_box("Pulse State", pulse.get("pulse_state"))
+
+with col3:
+    if brain:
+        radar_box("Model State", brain.get("model_state"))
+
+with col4:
+    if cycle:
+        radar_box("Cycle Phase", cycle.get("cycle_signal"))
 
 
 # ================================
-# REGIME + MACRO (compact layout)
+# REGIME + MACRO
 # ================================
 
 cols = st.columns(2)
@@ -162,10 +186,12 @@ try:
     df = pd.read_csv(PRESSURE_FILE)
     df = df.sort_values("month")
 
-    window = 96
-    df_recent = df.tail(window)
+    df_recent = df.tail(120)
 
-    st.line_chart(df_recent.set_index("month")["pressure"])
+    st.line_chart(
+        df_recent.set_index("month")["pressure"],
+        height=280
+    )
 
     last_two = df.tail(2)
 
@@ -196,7 +222,7 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    fig, ax = plt.subplots(figsize=(9,3.8))
+    fig, ax = plt.subplots(figsize=(9,3.6))
 
     ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
     ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
