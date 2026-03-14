@@ -1,5 +1,6 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def render_phase_map(df):
@@ -10,23 +11,60 @@ def render_phase_map(df):
         st.write("Phase space data unavailable")
         return
 
-    fig, ax = plt.subplots(figsize=(10,1.9))
+    tension = df["tension"].values
+    pressure = df["pressure"].values
 
-    # bandas de regime
+    fig, ax = plt.subplots(figsize=(10,2))
+
+    # ================================
+    # REGIME BANDS
+    # ================================
+
     ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
     ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
     ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
-    # histórico completo
-    ax.scatter(
-        df["tension"],
-        df["pressure"],
-        s=7,
-        alpha=0.20
+    # ================================
+    # ATTRACTOR DENSITY MAP
+    # ================================
+
+    heatmap, xedges, yedges = np.histogram2d(
+        tension,
+        pressure,
+        bins=30
     )
 
-    # trajetória recente
+    extent = [
+        xedges[0],
+        xedges[-1],
+        yedges[0],
+        yedges[-1]
+    ]
+
+    ax.imshow(
+        heatmap.T,
+        extent=extent,
+        origin="lower",
+        aspect="auto",
+        alpha=0.25
+    )
+
+    # ================================
+    # HISTORICAL POINTS
+    # ================================
+
+    ax.scatter(
+        tension,
+        pressure,
+        s=6,
+        alpha=0.18
+    )
+
+    # ================================
+    # RECENT TRAJECTORY
+    # ================================
+
     recent = df.tail(12)
 
     ax.plot(
@@ -35,21 +73,23 @@ def render_phase_map(df):
         linewidth=2
     )
 
+    # ================================
+    # CURRENT POSITION
+    # ================================
+
     current = df.iloc[-1]
     prev = df.iloc[-2]
 
-    # posição atual
     ax.scatter(
         current["tension"],
         current["pressure"],
-        s=110,
+        s=120,
         zorder=3
     )
 
     dx = current["tension"] - prev["tension"]
     dy = current["pressure"] - prev["pressure"]
 
-    # vetor de movimento
     ax.arrow(
         prev["tension"],
         prev["pressure"],
@@ -60,18 +100,19 @@ def render_phase_map(df):
         linewidth=2
     )
 
+    # ================================
+    # AXIS
+    # ================================
+
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
 
-    # limites compactos do eixo Y
-    ymin = max(0, df["pressure"].min() - 0.25)
-    ymax = df["pressure"].max() + 0.35
+    ymin = max(0, pressure.min() - 0.25)
+    ymax = pressure.max() + 0.35
+
     ax.set_ylim(ymin, ymax)
+    ax.set_xlim(0, tension.max() + 0.05)
 
-    # limite do eixo X sem espaço morto
-    ax.set_xlim(0, df["tension"].max() + 0.05)
-
-    # layout compacto
     plt.tight_layout(pad=0.1)
 
     st.pyplot(fig)
