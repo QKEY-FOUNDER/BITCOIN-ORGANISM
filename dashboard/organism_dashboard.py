@@ -74,7 +74,6 @@ def get_latest_heartbeat():
 
 st.set_page_config(page_title="Bitcoin Organism Observatory", layout="wide")
 
-# remover espaço vazio no topo
 st.markdown("""
 <style>
 .block-container {
@@ -96,7 +95,7 @@ cycle = data["cycle"]
 
 
 # ================================
-# EVOLUTION RADAR (compact)
+# EVOLUTION RADAR
 # ================================
 
 st.subheader("Evolution Radar")
@@ -129,6 +128,37 @@ with col3:
 with col4:
     if cycle:
         radar_box("Cycle Phase", cycle.get("cycle_signal"))
+
+
+# ================================
+# EVOLUTION MOMENTUM
+# ================================
+
+st.subheader("Evolution Momentum")
+
+try:
+
+    df = pd.read_csv(PRESSURE_FILE)
+    df = df.sort_values("month")
+
+    momentum = df.iloc[-1]["pressure"] - df.iloc[-2]["pressure"]
+
+    colM1, colM2 = st.columns(2)
+
+    colM1.metric("Momentum", round(momentum,3))
+
+    if momentum > 0:
+        colM2.success("Expansion energy increasing")
+
+    elif momentum < 0:
+        colM2.warning("Compression building")
+
+    else:
+        colM2.info("System stable")
+
+except:
+
+    st.write("Momentum unavailable")
 
 
 # ================================
@@ -199,12 +229,12 @@ try:
 
     colA.metric(
         last_two.iloc[0]["month"],
-        round(last_two.iloc[0]["pressure"], 3)
+        round(last_two.iloc[0]["pressure"],3)
     )
 
     colB.metric(
         last_two.iloc[1]["month"],
-        round(last_two.iloc[1]["pressure"], 3)
+        round(last_two.iloc[1]["pressure"],3)
     )
 
 except:
@@ -281,6 +311,31 @@ except:
 
 
 # ================================
+# NEXT EVOLUTION VECTOR
+# ================================
+
+st.subheader("Next Evolution Vector")
+
+try:
+
+    delta_pressure = df.iloc[-1]["pressure"] - df.iloc[-2]["pressure"]
+    delta_tension = df.iloc[-1]["tension"] - df.iloc[-2]["tension"]
+
+    if delta_pressure > 0 and delta_tension > 0:
+        st.success("↗ Expansion building")
+
+    elif delta_pressure < 0 and delta_tension < 0:
+        st.warning("↘ Compression forming")
+
+    else:
+        st.info("→ Transitional state")
+
+except:
+
+    st.write("Vector unavailable")
+
+
+# ================================
 # ORGANISM HEARTBEAT
 # ================================
 
@@ -308,17 +363,25 @@ colA, colB, colC = st.columns(3)
 
 with colA:
 
+    st.write("Organism Engine ● READY")
+
     if st.button("Run Full Organism"):
         os.system("./run_bitcoin_organism.sh")
         st.success("Organism cycle executed")
 
+
 with colB:
+
+    st.write("Physiology Engine ● READY")
 
     if st.button("Run Physiology Engine"):
         os.system("python -m engine.physiology_generator_engine")
         st.success("Physiology updated")
 
+
 with colC:
+
+    st.write("Evolution Engine ● READY")
 
     if st.button("Run Evolution Engine"):
         os.system("python -m engine.evolution_pressure_engine")
