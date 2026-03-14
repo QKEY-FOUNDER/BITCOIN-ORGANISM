@@ -4,7 +4,6 @@ import streamlit as st
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
-import numpy as np
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_PATH / "data"
@@ -142,20 +141,22 @@ try:
     df = pd.read_csv(PRESSURE_FILE)
     df = df.sort_values("month")
 
-    momentum = df.iloc[-1]["pressure"] - df.iloc[-2]["pressure"]
+    if len(df) >= 2:
 
-    colM1, colM2 = st.columns(2)
+        momentum = df.iloc[-1]["pressure"] - df.iloc[-2]["pressure"]
 
-    colM1.metric("Momentum", round(momentum,3))
+        colM1, colM2 = st.columns(2)
 
-    if momentum > 0:
-        colM2.success("Expansion energy increasing")
+        colM1.metric("Momentum", round(momentum,3))
 
-    elif momentum < 0:
-        colM2.warning("Compression building")
+        if momentum > 0:
+            colM2.success("Expansion energy increasing")
 
-    else:
-        colM2.info("System stable")
+        elif momentum < 0:
+            colM2.warning("Compression building")
+
+        else:
+            colM2.info("System stable")
 
 except:
 
@@ -216,7 +217,6 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    # converter mês para data
     df["date"] = df["month"].str.replace("bitcoin_", "", regex=False)
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
@@ -227,11 +227,10 @@ try:
 
     ax.plot(df["date"], df["pressure"], linewidth=2)
 
-    # bandas de regime
-    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)   # compressão
-    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3) # expansão
-    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3) # transição
-    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)  # instabilidade
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3)
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3)
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)
 
     ax.set_xlabel("Year")
     ax.set_ylabel("Pressure")
@@ -241,24 +240,27 @@ try:
 
     st.pyplot(fig)
 
-    last_two = df.tail(2)
+    if len(df) >= 2:
 
-    colA, colB = st.columns(2)
+        last_two = df.tail(2)
 
-    colA.metric(
-        last_two.iloc[0]["date"].strftime("%Y-%m"),
-        round(last_two.iloc[0]["pressure"],3)
-    )
+        colA, colB = st.columns(2)
 
-    colB.metric(
-        last_two.iloc[1]["date"].strftime("%Y-%m"),
-        round(last_two.iloc[1]["pressure"],3)
-    )
+        colA.metric(
+            last_two.iloc[0]["date"].strftime("%Y-%m"),
+            round(last_two.iloc[0]["pressure"],3)
+        )
+
+        colB.metric(
+            last_two.iloc[1]["date"].strftime("%Y-%m"),
+            round(last_two.iloc[1]["pressure"],3)
+        )
 
 except Exception as e:
 
     st.error("Pressure timeline error")
     st.write(e)
+
 
 # ================================
 # DYNAMIC EVOLUTION FIELD
@@ -277,56 +279,40 @@ try:
     ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
-    ax.scatter(df["tension"],df["pressure"],s=20,alpha=0.4)
+    ax.scatter(df["tension"], df["pressure"], s=25, alpha=0.4)
 
     recent = df.tail(6)
 
-    ax.plot(recent["tension"],recent["pressure"],linewidth=2)
+    ax.plot(recent["tension"], recent["pressure"], linewidth=2)
 
-    current = df.iloc[-1]
-    prev = df.iloc[-2]
+    if len(df) >= 2:
 
-    ax.scatter(current["tension"],current["pressure"],s=200)
+        current = df.iloc[-1]
+        prev = df.iloc[-2]
 
-    dx = current["tension"] - prev["tension"]
-    dy = current["pressure"] - prev["pressure"]
+        ax.scatter(current["tension"], current["pressure"], s=200)
 
-    ax.arrow(
-        prev["tension"],
-        prev["pressure"],
-        dx,
-        dy,
-        head_width=0.02,
-        length_includes_head=True
-    )
+        dx = current["tension"] - prev["tension"]
+        dy = current["pressure"] - prev["pressure"]
 
-    # projection vector (campo dinâmico)
+        ax.arrow(
+            prev["tension"],
+            prev["pressure"],
+            dx,
+            dy,
+            head_width=0.02,
+            length_includes_head=True
+        )
 
-    future_x = current["tension"]
-    future_y = current["pressure"]
-
-    proj_x = []
-    proj_y = []
-
-    for i in range(5):
-
-        future_x += dx
-        future_y += dy
-
-        proj_x.append(future_x)
-        proj_y.append(future_y)
-
-    ax.plot(proj_x,proj_y,linestyle="dashed")
+        st.success(
+            f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
+        )
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
     ax.set_title("Market Evolution Phase Space")
 
     st.pyplot(fig)
-
-    st.success(
-        f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
-    )
 
 except:
 
@@ -341,17 +327,19 @@ st.subheader("Next Evolution Vector")
 
 try:
 
-    delta_pressure = df.iloc[-1]["pressure"] - df.iloc[-2]["pressure"]
-    delta_tension = df.iloc[-1]["tension"] - df.iloc[-2]["tension"]
+    if len(df) >= 2:
 
-    if delta_pressure > 0 and delta_tension > 0:
-        st.success("↗ Expansion building")
+        delta_pressure = df.iloc[-1]["pressure"] - df.iloc[-2]["pressure"]
+        delta_tension = df.iloc[-1]["tension"] - df.iloc[-2]["tension"]
 
-    elif delta_pressure < 0 and delta_tension < 0:
-        st.warning("↘ Compression forming")
+        if delta_pressure > 0 and delta_tension > 0:
+            st.success("↗ Expansion building")
 
-    else:
-        st.info("→ Transitional state")
+        elif delta_pressure < 0 and delta_tension < 0:
+            st.warning("↘ Compression forming")
+
+        else:
+            st.info("→ Transitional state")
 
 except:
 
@@ -392,7 +380,6 @@ with colA:
         os.system("./run_bitcoin_organism.sh")
         st.success("Organism cycle executed")
 
-
 with colB:
 
     st.write("Physiology Engine ● READY")
@@ -400,7 +387,6 @@ with colB:
     if st.button("Run Physiology Engine"):
         os.system("python -m engine.physiology_generator_engine")
         st.success("Physiology updated")
-
 
 with colC:
 
