@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+print(“PHASE MAP MODULE LOADED”)
+
+
 def render_phase_map(df):
 
     st.subheader("Evolution Phase Space")
