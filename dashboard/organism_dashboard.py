@@ -1,8 +1,8 @@
 import streamlit as st
 
-from dashboard.modules.loader import load_system_state, load_pressure
-from dashboard.modules.radar import render_radar
-from dashboard.modules.timeline import render_timeline
+from modules.loader import load_system_state, load_pressure
+from modules.radar import render_radar
+from modules.timeline import render_timeline
 
 
 st.set_page_config(
@@ -51,5 +51,4 @@ render_timeline(pressure_df)
 # ================================
 
 st.markdown("---")
-
 st.caption("Bitcoin Organism Observatory — Evolution Monitoring System")
