@@ -4,6 +4,7 @@ import streamlit as st
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
+import numpy as np
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_PATH / "data"
@@ -214,26 +215,43 @@ st.subheader("Evolution Pressure Timeline")
 try:
 
     df = pd.read_csv(PRESSURE_FILE)
-    df = df.sort_values("month")
 
-    df_recent = df.tail(120)
+    df["date"] = df["month"].str.replace("bitcoin_", "")
+    df["date"] = pd.to_datetime(df["date"], format="%Y_%m")
 
-    st.line_chart(
-        df_recent.set_index("month")["pressure"],
-        height=280
-    )
+    df = df.sort_values("date")
+
+    fig, ax = plt.subplots(figsize=(12,3))
+
+    pressure = df["pressure"]
+
+    ax.plot(df["date"], pressure, linewidth=2)
+
+    # bandas de regime
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)   # compressão
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3) # expansão
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3) # transição
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)  # instabilidade
+
+    ax.set_xlabel("Year")
+    ax.set_ylabel("Pressure")
+    ax.set_title("Evolution Pressure Timeline")
+
+    fig.autofmt_xdate()
+
+    st.pyplot(fig)
 
     last_two = df.tail(2)
 
     colA, colB = st.columns(2)
 
     colA.metric(
-        last_two.iloc[0]["month"],
+        last_two.iloc[0]["date"].strftime("%Y-%m"),
         round(last_two.iloc[0]["pressure"],3)
     )
 
     colB.metric(
-        last_two.iloc[1]["month"],
+        last_two.iloc[1]["date"].strftime("%Y-%m"),
         round(last_two.iloc[1]["pressure"],3)
     )
 
@@ -243,45 +261,32 @@ except:
 
 
 # ================================
-# EVOLUTION PHASE MAP
+# DYNAMIC EVOLUTION FIELD
 # ================================
 
-st.subheader("Evolution Phase Map")
+st.subheader("Dynamic Evolution Field")
 
 try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    fig, ax = plt.subplots(figsize=(9,3.6))
+    fig, ax = plt.subplots(figsize=(9,4))
 
     ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
     ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
     ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
-    ax.scatter(
-        df["tension"],
-        df["pressure"],
-        s=25,
-        alpha=0.4
-    )
+    ax.scatter(df["tension"],df["pressure"],s=20,alpha=0.4)
 
     recent = df.tail(6)
 
-    ax.plot(
-        recent["tension"],
-        recent["pressure"],
-        linewidth=2
-    )
+    ax.plot(recent["tension"],recent["pressure"],linewidth=2)
 
     current = df.iloc[-1]
     prev = df.iloc[-2]
 
-    ax.scatter(
-        current["tension"],
-        current["pressure"],
-        s=200
-    )
+    ax.scatter(current["tension"],current["pressure"],s=200)
 
     dx = current["tension"] - prev["tension"]
     dy = current["pressure"] - prev["pressure"]
@@ -294,6 +299,24 @@ try:
         head_width=0.02,
         length_includes_head=True
     )
+
+    # projection vector (campo dinâmico)
+
+    future_x = current["tension"]
+    future_y = current["pressure"]
+
+    proj_x = []
+    proj_y = []
+
+    for i in range(5):
+
+        future_x += dx
+        future_y += dy
+
+        proj_x.append(future_x)
+        proj_y.append(future_y)
+
+    ax.plot(proj_x,proj_y,linestyle="dashed")
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
