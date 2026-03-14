@@ -26,7 +26,6 @@ HEARTBEAT_DIR = (
     / "heartbeat"
 )
 
-
 def load_json(file):
     try:
         with open(DATA_PATH / file) as f:
@@ -34,8 +33,8 @@ def load_json(file):
     except:
         return None
 
-
 def get_latest_heartbeat():
+
     try:
 
         files = list(HEARTBEAT_DIR.glob("*.json"))
@@ -94,13 +93,13 @@ if observatory:
 
     regime = observatory.get("evolution_stage")
 
-    if "Expansion" in regime:
+    if regime and "Expansion" in regime:
         st.success(f"Regime: {regime}")
 
-    elif "Compression" in regime:
+    elif regime and "Compression" in regime:
         st.warning(f"Regime: {regime}")
 
-    elif "Instability" in regime:
+    elif regime and "Instability" in regime:
         st.error(f"Regime: {regime}")
 
     else:
@@ -133,31 +132,33 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
+    df = df.sort_values("month")
+
     window = 96
     df_recent = df.tail(window)
 
-    chart_df = df_recent.set_index("month")
-
-    st.line_chart(chart_df["pressure"])
+    st.line_chart(df_recent.set_index("month")["pressure"])
 
     last_two = df.tail(2)
 
-    prev_month = last_two.iloc[0]["month"]
-    curr_month = last_two.iloc[1]["month"]
-
-    st.markdown("Latest Evolution Pressure")
-
     colA, colB = st.columns(2)
 
-    colA.metric(prev_month, round(last_two.iloc[0]["pressure"],3))
-    colB.metric(curr_month, round(last_two.iloc[1]["pressure"],3))
+    colA.metric(
+        last_two.iloc[0]["month"],
+        round(last_two.iloc[0]["pressure"],3)
+    )
+
+    colB.metric(
+        last_two.iloc[1]["month"],
+        round(last_two.iloc[1]["pressure"],3)
+    )
 
 except:
 
     st.write("Pressure data not available")
 
 
-# PHASE SPACE MAP
+# EVOLUTION PHASE MAP
 
 st.subheader("Evolution Phase Map")
 
@@ -165,69 +166,68 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    if "tension" in df.columns:
+    fig, ax = plt.subplots(figsize=(9,4))
 
-        fig, ax = plt.subplots(figsize=(10,6))
+    # REGIME ZONES
 
-        ax.axhspan(0,1.2,alpha=0.15)
-        ax.axhspan(1.2,2.5,alpha=0.15)
-        ax.axhspan(2.5,3.8,alpha=0.15)
-        ax.axhspan(3.8,10,alpha=0.15)
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
-        ax.scatter(
-            df["tension"],
-            df["pressure"],
-            s=25,
-            alpha=0.4
-        )
+    ax.scatter(
+        df["tension"],
+        df["pressure"],
+        s=25,
+        alpha=0.4
+    )
 
-        recent=df.tail(6)
+    recent = df.tail(6)
 
-        ax.plot(
-            recent["tension"],
-            recent["pressure"],
-            linewidth=2
-        )
+    ax.plot(
+        recent["tension"],
+        recent["pressure"],
+        linewidth=2
+    )
 
-        current=df.iloc[-1]
+    current = df.iloc[-1]
+    prev = df.iloc[-2]
 
-        ax.scatter(
-            current["tension"],
-            current["pressure"],
-            s=200
-        )
+    ax.scatter(
+        current["tension"],
+        current["pressure"],
+        s=220
+    )
 
-        prev=df.iloc[-2]
+    dx = current["tension"] - prev["tension"]
+    dy = current["pressure"] - prev["pressure"]
 
-        dx=current["tension"]-prev["tension"]
-        dy=current["pressure"]-prev["pressure"]
+    ax.arrow(
+        prev["tension"],
+        prev["pressure"],
+        dx,
+        dy,
+        head_width=0.02,
+        length_includes_head=True
+    )
 
-        ax.arrow(
-            prev["tension"],
-            prev["pressure"],
-            dx,
-            dy,
-            head_width=0.02,
-            length_includes_head=True
-        )
+    ax.set_xlabel("Tension")
+    ax.set_ylabel("Pressure")
 
-        ax.set_xlabel("Tension")
-        ax.set_ylabel("Pressure")
+    ax.set_title("Market Evolution Phase Space")
 
-        ax.set_title("Market Evolution Phase Space")
+    st.pyplot(fig)
 
-        st.pyplot(fig)
-
-        st.success(
-            f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
-        )
+    st.success(
+        f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
+    )
 
 except:
 
     st.write("Phase map data not available")
 
 
-# HEARTBEAT
+# ORGANISM HEARTBEAT
 
 st.subheader("Organism Heartbeat")
 
