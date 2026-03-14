@@ -33,7 +33,7 @@ def load_json(file):
     except:
         return None
 
-def get_latest_heartbeat():
+            def get_latest_heartbeat():
 
     try:
 
@@ -46,6 +46,18 @@ def get_latest_heartbeat():
 
         with open(latest) as f:
             data = json.load(f)
+
+        # --- CORREÇÃO DA DATA DO HEARTBEAT ---
+        from datetime import datetime, timedelta
+
+        today = datetime.utcnow().date()
+        yesterday = today - timedelta(days=1)
+
+        if "canonical_state" in data:
+            data["canonical_state"]["date"] = str(yesterday)
+
+        if "date" in data:
+            data["date"] = str(yesterday)
 
         return data
 
