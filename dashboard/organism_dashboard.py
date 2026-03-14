@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import os
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 BASE_PATH = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_PATH / "data"
@@ -54,10 +55,7 @@ def get_latest_heartbeat():
         return None
 
 
-st.set_page_config(
-    page_title="Bitcoin Organism Observatory",
-    layout="wide"
-)
+st.set_page_config(page_title="Bitcoin Organism Observatory", layout="wide")
 
 st.title("🧬 BITCOIN ORGANISM OBSERVATORY")
 
@@ -97,19 +95,17 @@ if observatory:
 
     regime = observatory.get("evolution_stage")
 
-    if regime:
+    if "Expansion" in regime:
+        st.success(f"Regime: {regime}")
 
-        if "Expansion" in regime:
-            st.success(f"Regime: {regime}")
+    elif "Compression" in regime:
+        st.warning(f"Regime: {regime}")
 
-        elif "Compression" in regime:
-            st.warning(f"Regime: {regime}")
+    elif "Instability" in regime:
+        st.error(f"Regime: {regime}")
 
-        elif "Instability" in regime:
-            st.error(f"Regime: {regime}")
-
-        else:
-            st.info(f"Regime: {regime}")
+    else:
+        st.info(f"Regime: {regime}")
 
 
 # Macro Synchronization
@@ -138,32 +134,26 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    df_recent = df.tail(120)
+    window = 96
+    df_recent = df.tail(window)
 
     st.line_chart(df_recent["pressure"])
 
     last_two = df.tail(2)
 
-    st.markdown("**Latest Evolution Pressure**")
+    st.markdown("Latest Evolution Pressure")
 
     colA, colB = st.columns(2)
 
-    colA.metric(
-        "Previous Month",
-        round(last_two.iloc[0]["pressure"], 3)
-    )
-
-    colB.metric(
-        "Current Month",
-        round(last_two.iloc[1]["pressure"], 3)
-    )
+    colA.metric("Previous Month", round(last_two.iloc[0]["pressure"], 3))
+    colB.metric("Current Month", round(last_two.iloc[1]["pressure"], 3))
 
 except:
 
     st.write("Pressure data not available")
 
 
-# Evolution Phase Map
+# Evolution Phase Map (Phase Space)
 
 st.subheader("Evolution Phase Map")
 
@@ -173,21 +163,50 @@ try:
 
     if "tension" in df.columns:
 
-        st.scatter_chart(
-            df,
-            x="tension",
-            y="pressure"
+        fig, ax = plt.subplots(figsize=(10,6))
+
+        # zonas de regime
+        ax.axhspan(0,1.2,alpha=0.1,color="blue")
+        ax.axhspan(1.2,2.5,alpha=0.1,color="green")
+        ax.axhspan(2.5,3.8,alpha=0.1,color="yellow")
+        ax.axhspan(3.8,10,alpha=0.1,color="red")
+
+        # histórico
+        ax.scatter(
+            df["tension"],
+            df["pressure"],
+            s=25,
+            alpha=0.5
         )
 
-        current = df.iloc[-1]
+        # trajetória recente
+        recent=df.tail(6)
+
+        ax.plot(
+            recent["tension"],
+            recent["pressure"],
+            linewidth=2
+        )
+
+        # posição atual
+        current=df.iloc[-1]
+
+        ax.scatter(
+            current["tension"],
+            current["pressure"],
+            s=180
+        )
+
+        ax.set_xlabel("Tension")
+        ax.set_ylabel("Pressure")
+
+        ax.set_title("Market Evolution Phase Space")
+
+        st.pyplot(fig)
 
         st.success(
             f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
         )
-
-    else:
-
-        st.write("Tension data not available")
 
 except:
 
@@ -203,7 +222,6 @@ heartbeat = get_latest_heartbeat()
 if heartbeat:
 
     st.success("Heartbeat detected")
-
     st.json(heartbeat)
 
 else:
@@ -223,13 +241,11 @@ with colA:
         os.system("./run_bitcoin_organism.sh")
         st.success("Organism cycle executed")
 
-
 with colB:
 
     if st.button("Run Physiology Engine"):
         os.system("python -m engine.physiology_generator_engine")
         st.success("Physiology updated")
-
 
 with colC:
 
