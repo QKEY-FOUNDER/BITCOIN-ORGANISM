@@ -41,12 +41,23 @@ def render_phase_map(df):
     grid = np.vstack([xx.ravel(), yy.ravel()])
     density = kde(grid).reshape(xx.shape)
 
+    # campo suave
     ax.contourf(
         xx,
         yy,
         density,
-        levels=10,
+        levels=12,
         alpha=0.18
+    )
+
+    # linhas de contorno (attractor)
+    ax.contour(
+        xx,
+        yy,
+        density,
+        levels=6,
+        linewidths=0.6,
+        alpha=0.35
     )
 
     # ================================
@@ -98,6 +109,10 @@ def render_phase_map(df):
         length_includes_head=True,
         linewidth=2
     )
+
+    # ================================
+    # AXIS
+    # ================================
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
