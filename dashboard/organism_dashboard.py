@@ -102,17 +102,6 @@ st.subheader("Evolution Radar")
 
 col1, col2, col3, col4 = st.columns(4)
 
-
-def radar_box(title, value):
-
-    st.markdown(f"""
-    <div style="background:#f7f7f7;padding:10px;border-radius:8px">
-        <div style="font-size:12px;color:#666">{title}</div>
-        <div style="font-size:18px;font-weight:600">{value}</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-
 with col1:
     if observatory:
         radar_box("Evolution Stage", observatory.get("evolution_stage"))
@@ -164,50 +153,6 @@ except:
 
 
 # ================================
-# REGIME + MACRO
-# ================================
-
-cols = st.columns(2)
-
-with cols[0]:
-
-    st.subheader("Market Regime")
-
-    if observatory:
-
-        regime = observatory.get("evolution_stage")
-
-        if regime and "Expansion" in regime:
-            st.success(f"Regime: {regime}")
-
-        elif regime and "Compression" in regime:
-            st.warning(f"Regime: {regime}")
-
-        elif regime and "Instability" in regime:
-            st.error(f"Regime: {regime}")
-
-        else:
-            st.info(f"Regime: {regime}")
-
-with cols[1]:
-
-    st.subheader("Macro Synchronization")
-
-    if sync:
-
-        sync_state = sync.get("synchronization_state")
-
-        if sync_state == "aligned":
-            st.success("Global synchronization detected")
-
-        elif sync_state == "neutral":
-            st.info("Global systems neutral")
-
-        else:
-            st.warning("Macro misalignment detected")
-
-
-# ================================
 # EVOLUTION PRESSURE TIMELINE
 # ================================
 
@@ -217,7 +162,6 @@ try:
 
     df = pd.read_csv(PRESSURE_FILE)
 
-    # converter "bitcoin_YYYY_MM" para datetime real
     df["date"] = (
         df["month"]
         .str.replace("bitcoin_", "", regex=False)
@@ -231,7 +175,6 @@ try:
 
     fig, ax = plt.subplots(figsize=(12,4))
 
-    # linha da pressão
     ax.plot(
         df["date"],
         df["pressure"],
@@ -240,12 +183,14 @@ try:
     )
 
     # bandas de regime
-    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)   # compressão
-    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3) # expansão
-    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3) # transição
-    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)  # instabilidade
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.3)
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.3)
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.3)
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.3)
 
-    # eixo temporal apenas com anos
+    # mostrar todo o histórico
+    ax.set_ylim(0,7)
+
     import matplotlib.dates as mdates
 
     ax.xaxis.set_major_locator(mdates.YearLocator())
@@ -280,6 +225,50 @@ except Exception as e:
     st.error("Pressure timeline error")
     st.write(e)
 
+
+# ================================
+# REGIME + MACRO
+# ================================
+
+cols = st.columns(2)
+
+with cols[0]:
+
+    st.subheader("Market Regime")
+
+    if observatory:
+
+        regime = observatory.get("evolution_stage")
+
+        if regime and "Expansion" in regime:
+            st.success(f"Regime: {regime}")
+
+        elif regime and "Compression" in regime:
+            st.warning(f"Regime: {regime}")
+
+        elif regime and "Instability" in regime:
+            st.error(f"Regime: {regime}")
+
+        else:
+            st.info(f"Regime: {regime}")
+
+
+with cols[1]:
+
+    st.subheader("Macro Synchronization")
+
+    if sync:
+
+        sync_state = sync.get("synchronization_state")
+
+        if sync_state == "aligned":
+            st.success("Global synchronization detected")
+
+        elif sync_state == "neutral":
+            st.info("Global systems neutral")
+
+        else:
+            st.warning("Macro misalignment detected")
 # ================================
 # DYNAMIC EVOLUTION FIELD
 # ================================
