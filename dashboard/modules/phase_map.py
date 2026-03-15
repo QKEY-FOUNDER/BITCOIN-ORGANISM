@@ -15,7 +15,7 @@ def render_phase_map(df):
     tension = df["tension"].values
     pressure = df["pressure"].values
 
-    fig, ax = plt.subplots(figsize=(10,2))
+    fig, ax = plt.subplots(figsize=(10,2.2))
 
     # ================================
     # REGIME BANDS
@@ -38,6 +38,7 @@ def render_phase_map(df):
     ymax = pressure.max() + 0.35
 
     xx, yy = np.mgrid[xmin:xmax:200j, ymin:ymax:200j]
+
     grid = np.vstack([xx.ravel(), yy.ravel()])
     density = kde(grid).reshape(xx.shape)
 
@@ -56,6 +57,24 @@ def render_phase_map(df):
         levels=5,
         linewidths=0.4,
         alpha=0.25
+    )
+
+    # ================================
+    # FLOW FIELD
+    # ================================
+
+    gy, gx = np.gradient(density)
+
+    step = 12
+
+    ax.quiver(
+        xx[::step, ::step],
+        yy[::step, ::step],
+        gx[::step, ::step],
+        gy[::step, ::step],
+        color="gray",
+        alpha=0.35,
+        scale=50
     )
 
     # ================================
@@ -107,7 +126,7 @@ def render_phase_map(df):
     )
 
     # ================================
-    # FIND ATTRACTOR CENTER
+    # ATTRACTOR
     # ================================
 
     max_density_idx = np.unravel_index(np.argmax(density), density.shape)
@@ -124,7 +143,7 @@ def render_phase_map(df):
     )
 
     # ================================
-    # NORMALIZED DISTANCE
+    # DISTANCE
     # ================================
 
     tension_range = xmax - xmin
@@ -135,15 +154,7 @@ def render_phase_map(df):
 
     dist = np.sqrt(dx_norm**2 + dy_norm**2)
 
-    # ================================
-    # ENERGY INDEX
-    # ================================
-
     energy = dist**2 * current["pressure"]
-
-    # ================================
-    # AXIS
-    # ================================
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
@@ -158,10 +169,6 @@ def render_phase_map(df):
     st.success(
         f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
     )
-
-    # ================================
-    # SYSTEM STATUS
-    # ================================
 
     if dist < 0.12:
         status = "Near equilibrium"
