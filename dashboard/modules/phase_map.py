@@ -27,7 +27,7 @@ def render_phase_map(df):
     ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
 
     # ================================
-    # KDE DENSITY FIELD
+    # KDE FIELD
     # ================================
 
     xy = np.vstack([tension, pressure])
@@ -50,7 +50,7 @@ def render_phase_map(df):
         alpha=0.16
     )
 
-    # linhas de contorno suaves
+    # contornos
     ax.contour(
         xx,
         yy,
@@ -99,6 +99,7 @@ def render_phase_map(df):
         zorder=4
     )
 
+    # vetor histórico imediato
     dx = current["tension"] - prev["tension"]
     dy = current["pressure"] - prev["pressure"]
 
@@ -111,6 +112,36 @@ def render_phase_map(df):
         length_includes_head=True,
         linewidth=2
     )
+
+    # ================================
+    # PROBABLE TRAJECTORY (KDE GRADIENT)
+    # ================================
+
+    # encontrar célula mais próxima
+    ix = np.abs(xx[:,0] - current["tension"]).argmin()
+    iy = np.abs(yy[0,:] - current["pressure"]).argmin()
+
+    # gradiente do campo
+    gy, gx = np.gradient(density)
+
+    grad_x = gx[ix, iy]
+    grad_y = gy[ix, iy]
+
+    scale = 0.15
+
+    ax.arrow(
+        current["tension"],
+        current["pressure"],
+        grad_x * scale,
+        grad_y * scale,
+        head_width=0.015,
+        color="red",
+        linewidth=2
+    )
+
+    # ================================
+    # AXIS
+    # ================================
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
