@@ -59,24 +59,25 @@ def render_phase_map(df):
         alpha=0.25
     )
 
-   # ================================
-   # FLOW FIELD
-   # ================================
+    # ================================
+    # FLOW FIELD
+    # ================================
 
-   gy, gx = np.gradient(density)
+    gy, gx = np.gradient(density)
 
-   step = 10
+    step = 10
 
-   ax.quiver(
-      xx[::step, ::step],
-      yy[::step, ::step],
-      gx[::step, ::step],
-      gy[::step, ::step],
-      color="black",
-      alpha=0.6,
-      scale=8,
-      width=0.003
+    ax.quiver(
+        xx[::step, ::step],
+        yy[::step, ::step],
+        gx[::step, ::step],
+        gy[::step, ::step],
+        color="black",
+        alpha=0.6,
+        scale=8,
+        width=0.003
     )
+
     # ================================
     # HISTORICAL POINTS
     # ================================
