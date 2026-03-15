@@ -1,17 +1,18 @@
 import streamlit as st
 import sys
 from pathlib import Path
-from dashboard.modules.galaxy_phase_animation import render_galaxy_animation
 
 # garantir que a raiz do repo está no path
-ROOT_DIR = Path(__file__).resolve().parents[1]
+ROOT_DIR = Path(file).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
+# IMPORTS DOS MODULOS (depois do path estar correto)
 from dashboard.modules.loader import load_system_state, load_pressure
 from dashboard.modules.radar import render_radar
 from dashboard.modules.timeline import render_timeline
 from dashboard.modules.phase_map import render_phase_map
+from dashboard.modules.galaxy_phase_animation import render_galaxy_animation
 
 st.set_page_config(
     page_title="Bitcoin Organism Observatory",
