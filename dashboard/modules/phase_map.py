@@ -21,10 +21,10 @@ def render_phase_map(df):
     # REGIME BANDS
     # ================================
 
-    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.35)
-    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.35)
-    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.35)
-    ax.axhspan(3.8,10,color="#fecaca",alpha=0.35)
+    ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.22)
+    ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.22)
+    ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.22)
+    ax.axhspan(3.8,10,color="#fecaca",alpha=0.22)
 
     # ================================
     # KDE FIELD
@@ -41,7 +41,6 @@ def render_phase_map(df):
     grid = np.vstack([xx.ravel(), yy.ravel()])
     density = kde(grid).reshape(xx.shape)
 
-    # campo suave
     ax.contourf(
         xx,
         yy,
@@ -50,7 +49,6 @@ def render_phase_map(df):
         alpha=0.16
     )
 
-    # contornos
     ax.contour(
         xx,
         yy,
@@ -84,10 +82,6 @@ def render_phase_map(df):
         color="#1f77b4"
     )
 
-    # ================================
-    # CURRENT POSITION
-    # ================================
-
     current = df.iloc[-1]
     prev = df.iloc[-2]
 
@@ -99,7 +93,6 @@ def render_phase_map(df):
         zorder=4
     )
 
-    # vetor histórico imediato
     dx = current["tension"] - prev["tension"]
     dy = current["pressure"] - prev["pressure"]
 
@@ -114,29 +107,29 @@ def render_phase_map(df):
     )
 
     # ================================
-    # PROBABLE TRAJECTORY (KDE GRADIENT)
+    # FIND ATTRACTOR CENTER
     # ================================
 
-    # encontrar célula mais próxima
-    ix = np.abs(xx[:,0] - current["tension"]).argmin()
-    iy = np.abs(yy[0,:] - current["pressure"]).argmin()
+    max_density_idx = np.unravel_index(np.argmax(density), density.shape)
 
-    # gradiente do campo
-    gy, gx = np.gradient(density)
+    attractor_x = xx[max_density_idx]
+    attractor_y = yy[max_density_idx]
 
-    grad_x = gx[ix, iy]
-    grad_y = gy[ix, iy]
+    ax.scatter(
+        attractor_x,
+        attractor_y,
+        s=60,
+        color="black",
+        zorder=5
+    )
 
-    scale = 0.15
+    # ================================
+    # DISTANCE TO ATTRACTOR
+    # ================================
 
-    ax.arrow(
-        current["tension"],
-        current["pressure"],
-        grad_x * scale,
-        grad_y * scale,
-        head_width=0.015,
-        color="red",
-        linewidth=2
+    dist = np.sqrt(
+        (current["tension"] - attractor_x)**2 +
+        (current["pressure"] - attractor_y)**2
     )
 
     # ================================
@@ -155,4 +148,19 @@ def render_phase_map(df):
 
     st.success(
         f"Current Position → Tension {round(current['tension'],3)} | Pressure {round(current['pressure'],3)}"
+    )
+
+    # ================================
+    # SYSTEM STATE
+    # ================================
+
+    if dist < 0.15:
+        status = "Near equilibrium"
+    elif dist < 0.35:
+        status = "Moderate displacement"
+    else:
+        status = "High disequilibrium"
+
+    st.info(
+        f"Distance to Attractor → {round(dist,3)} | System Status → {status}"
     )
