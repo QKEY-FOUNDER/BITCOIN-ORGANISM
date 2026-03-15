@@ -46,18 +46,18 @@ def render_phase_map(df):
         xx,
         yy,
         density,
-        levels=12,
-        alpha=0.18
+        levels=8,
+        alpha=0.16
     )
 
-    # linhas de contorno (attractor)
+    # linhas de contorno suaves
     ax.contour(
         xx,
         yy,
         density,
-        levels=6,
-        linewidths=0.6,
-        alpha=0.35
+        levels=5,
+        linewidths=0.4,
+        alpha=0.25
     )
 
     # ================================
@@ -67,8 +67,8 @@ def render_phase_map(df):
     ax.scatter(
         tension,
         pressure,
-        s=7,
-        alpha=0.25
+        s=6,
+        alpha=0.18
     )
 
     # ================================
@@ -80,7 +80,8 @@ def render_phase_map(df):
     ax.plot(
         recent["tension"],
         recent["pressure"],
-        linewidth=2
+        linewidth=2.2,
+        color="#1f77b4"
     )
 
     # ================================
@@ -93,8 +94,9 @@ def render_phase_map(df):
     ax.scatter(
         current["tension"],
         current["pressure"],
-        s=120,
-        zorder=3
+        s=140,
+        color="#ff7f0e",
+        zorder=4
     )
 
     dx = current["tension"] - prev["tension"]
@@ -109,10 +111,6 @@ def render_phase_map(df):
         length_includes_head=True,
         linewidth=2
     )
-
-    # ================================
-    # AXIS
-    # ================================
 
     ax.set_xlabel("Tension")
     ax.set_ylabel("Pressure")
