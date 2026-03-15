@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 # garantir que a raiz do repo está no path
-ROOT_DIR = Path(file).resolve().parents[1]
+ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
