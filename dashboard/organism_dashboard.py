@@ -1,6 +1,7 @@
 import streamlit as st
 import sys
 from pathlib import Path
+from dashboard.modules.galaxy_phase_animation import render_galaxy_animation
 
 # garantir que a raiz do repo está no path
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -58,6 +59,8 @@ render_timeline(pressure_df)
 
 render_phase_map(pressure_df)
 
+if st.button("▶ Galaxy Evolution"):
+    render_galaxy_animation(pressure_df)
 
 # ================================
 # FOOTER
