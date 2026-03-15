@@ -118,19 +118,28 @@ def render_phase_map(df):
     ax.scatter(
         attractor_x,
         attractor_y,
-        s=60,
+        s=70,
         color="black",
         zorder=5
     )
 
     # ================================
-    # DISTANCE TO ATTRACTOR
+    # NORMALIZED DISTANCE
     # ================================
 
-    dist = np.sqrt(
-        (current["tension"] - attractor_x)**2 +
-        (current["pressure"] - attractor_y)**2
-    )
+    tension_range = xmax - xmin
+    pressure_range = ymax - ymin
+
+    dx_norm = (current["tension"] - attractor_x) / tension_range
+    dy_norm = (current["pressure"] - attractor_y) / pressure_range
+
+    dist = np.sqrt(dx_norm**2 + dy_norm**2)
+
+    # ================================
+    # ENERGY INDEX
+    # ================================
+
+    energy = dist**2 * current["pressure"]
 
     # ================================
     # AXIS
@@ -151,16 +160,20 @@ def render_phase_map(df):
     )
 
     # ================================
-    # SYSTEM STATE
+    # SYSTEM STATUS
     # ================================
 
-    if dist < 0.15:
+    if dist < 0.12:
         status = "Near equilibrium"
-    elif dist < 0.35:
+    elif dist < 0.25:
         status = "Moderate displacement"
     else:
         status = "High disequilibrium"
 
     st.info(
         f"Distance to Attractor → {round(dist,3)} | System Status → {status}"
+    )
+
+    st.warning(
+        f"System Energy Index → {round(energy,3)}"
     )
