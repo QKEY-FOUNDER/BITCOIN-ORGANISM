@@ -14,11 +14,14 @@ def render_galaxy_animation(df):
         st.write("Galaxy animation unavailable")
         return
 
-    # velocidade da animação
-    speed = st.slider("Animation speed (seconds per frame)", 0.05, 1.0, 0.25)
+    speed = st.slider("Animation speed (seconds per frame)", 0.02, 0.5, 0.08)
 
     tension = df["tension"].values
     pressure = df["pressure"].values
+
+    # =========================
+    # KDE FIELD (fundo Phase Space)
+    # =========================
 
     xy = np.vstack([tension, pressure])
     kde = gaussian_kde(xy)
@@ -31,29 +34,15 @@ def render_galaxy_animation(df):
     grid = np.vstack([xx.ravel(), yy.ravel()])
     density = kde(grid).reshape(xx.shape)
 
-    colors = [
-        "#0050ff",   # passado distante
-        "#4a6cff",   # passado recente
-        "#9b4dff",   # epicentro
-        "#ff6b6b",   # futuro próximo
-        "#ff0000"    # futuro distante
-    ]
-
-    sizes = [
-        260,
-        180,
-        120,
-        70,
-        35
-    ]
-
     placeholder = st.empty()
 
-    for i in range(len(df)):
+    angle = 0
+
+    for i in range(1, len(df)):
 
         fig, ax = plt.subplots(figsize=(10,3))
 
-        # bandas de regime
+        # bandas iguais ao Phase Space
         ax.axhspan(0,1.2,color="#c7d2fe",alpha=0.22)
         ax.axhspan(1.2,2.5,color="#bbf7d0",alpha=0.22)
         ax.axhspan(2.5,3.8,color="#fde68a",alpha=0.22)
@@ -77,32 +66,63 @@ def render_galaxy_animation(df):
             alpha=0.25
         )
 
-        # janela deslizante de 5 meses
-        idx = [
-            max(i-2,0),
-            max(i-1,0),
-            i,
-            min(i+1,len(df)-1),
-            min(i+2,len(df)-1)
-        ]
+        # =========================
+        # PONTO ATUAL (epicentro)
+        # =========================
 
-        for j, k in enumerate(idx):
+        current = df.iloc[i]
+        prev = df.iloc[i-1]
 
-            p = df.iloc[k]
+        cx = current["tension"]
+        cy = current["pressure"]
 
-            # pequeno efeito pulsante no epicentro
-            size = sizes[j]
-            if j == 2:
-                size = size + math.sin(i * 0.4) * 20
+        # vetor movimento
+        dx = cx - prev["tension"]
+        dy = cy - prev["pressure"]
 
-            ax.scatter(
-                p["tension"],
-                p["pressure"],
-                s=size,
-                color=colors[j],
-                alpha=0.95,
-                zorder=3
-            )
+        norm = math.sqrt(dx*dx + dy*dy) + 1e-6
+
+        dx /= norm
+        dy /= norm
+
+        # vetor perpendicular
+        px = -dy
+        py = dx
+
+        # rotação orbital
+        angle += math.radians(30)
+
+        r1 = 0.04
+        r2 = 0.08
+
+        rotx = math.cos(angle)
+        roty = math.sin(angle)
+
+        # caudas azuis (passado)
+        tail1x = cx + r1*(px*rotx - dx*roty)
+        tail1y = cy + r1*(py*rotx - dy*roty)
+
+        tail2x = cx + r2*(px*rotx - dx*roty)
+        tail2y = cy + r2*(py*rotx - dy*roty)
+
+        # caudas vermelhas (futuro)
+        head1x = cx - r1*(px*rotx - dx*roty)
+        head1y = cy - r1*(py*rotx - dy*roty)
+
+        head2x = cx - r2*(px*rotx - dx*roty)
+        head2y = cy - r2*(py*rotx - dy*roty)
+
+        # =========================
+        # DESENHAR GALÁXIA
+        # =========================
+
+        ax.scatter(cx, cy, s=160, color="#9b4dff", zorder=5)     # epicentro
+
+        ax.scatter(tail1x, tail1y, s=110, color="#4a6cff")
+        ax.scatter(tail2x, tail2y, s=200, color="#0050ff")
+
+        ax.scatter(head1x, head1y, s=70, color="#ff6b6b")
+        ax.scatter(head2x, head2y, s=40, color="#ff0000")
 
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
