@@ -1,7 +1,3 @@
-import importlib
-import dashboard.modules.galaxy_phase_animation as galaxy_phase_animation
-
-importlib.reload(galaxy_phase_animation)
 from dashboard.modules.galaxy_phase_animation import render_galaxy_phase_animation
 import streamlit as st
 import matplotlib.pyplot as plt
