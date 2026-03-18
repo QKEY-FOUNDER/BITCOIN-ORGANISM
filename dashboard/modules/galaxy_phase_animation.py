@@ -1,10 +1,8 @@
-from dashboard.modules.galaxy_phase_animation import render_galaxy_phase_animation
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.stats import gaussian_kde
 import time
-
 
 # ================================
 # COMET TRAIL
