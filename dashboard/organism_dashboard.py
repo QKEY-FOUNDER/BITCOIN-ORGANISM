@@ -2,14 +2,14 @@ import streamlit as st
 import sys
 from pathlib import Path
 
-import dashboard.modules.galaxy_phase_animation as galaxy
-
-# garantir que a raiz do repo está no path
+# 🔥 PRIMEIRO: corrigir path
 ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
 
-# IMPORTS DOS MODULOS (depois do path estar correto)
+# 🔥 SÓ DEPOIS: imports
+import dashboard.modules.galaxy_phase_animation as galaxy
+
 from dashboard.modules.loader import load_system_state, load_pressure
 from dashboard.modules.radar import render_radar
 from dashboard.modules.timeline import render_timeline
@@ -62,7 +62,7 @@ render_timeline(pressure_df)
 render_phase_map(pressure_df)
 
 if st.button("▶ Galaxy Evolution"):
-    render_galaxy_animation(pressure_df)
+    galaxy.render_galaxy_phase_animation(pressure_df)
 
 # ================================
 # FOOTER
