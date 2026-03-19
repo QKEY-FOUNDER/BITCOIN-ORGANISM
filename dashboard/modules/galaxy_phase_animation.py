@@ -47,24 +47,33 @@ def draw_comet_trail(ax, x_prev2, y_prev2, x_prev1, y_prev1, x, y, accel):
 
 def draw_ghost_field(ax, history, xmin, xmax, ymin, ymax):
 
-    if len(history) < 2:
+    # precisa de pelo menos 3 pontos
+    if len(history) < 3:
         return
 
     points = np.array(history)
 
-    kde = gaussian_kde(points.T)
+    # evitar pontos colineares / degenerados
+    if np.linalg.matrix_rank(points - points.mean(axis=0)) < 2:
+        return
 
-    xx, yy = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
-    grid = np.vstack([xx.ravel(), yy.ravel()])
-    density = kde(grid).reshape(xx.shape)
+    try:
+        kde = gaussian_kde(points.T)
 
-    ax.contourf(
-        xx, yy, density,
-        levels=6,
-        cmap="Blues",
-        alpha=0.15
-    )
+        xx, yy = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
+        grid = np.vstack([xx.ravel(), yy.ravel()])
+        density = kde(grid).reshape(xx.shape)
 
+        ax.contourf(
+            xx, yy, density,
+            levels=6,
+            cmap="Blues",
+            alpha=0.15
+        )
+
+    except Exception:
+        # fallback silencioso (não quebra o sistema)
+        return
 
 # ================================
 # GRAVITATIONAL LINES
