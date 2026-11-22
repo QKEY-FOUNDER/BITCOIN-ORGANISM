@@ -1,7 +1,7 @@
 {
-  "current_pressure": 0.02410685413477919,
-  "velocity": -0.008114503544835212,
-  "acceleration": -0.016229007089670424,
+  "current_pressure": 0.0240169547531206,
+  "velocity": -0.010467349167976061,
+  "acceleration": -0.020934698335952122,
   "pulse_state": "Contraction Phase",
-  "timestamp": "2026-11-21 13:58:47.389153"
+  "timestamp": "2026-11-22 13:52:19.857691"
 }
